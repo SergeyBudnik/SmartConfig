@@ -1,0 +1,7 @@
+# SmartConfig
+
+### About
+
+TBD
+
+### Usage
