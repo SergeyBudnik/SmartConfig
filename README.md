@@ -11,8 +11,7 @@ SmartConfig requires two files to function:
 1. Dimensions:
 
 ```
-tier: ['sit', 'uat', 'prod']
-location: ['uk', 'us', 'sg']
+tier: ['uat', 'prod']
 zone: ['int', 'ext']
 ```
 
@@ -20,11 +19,11 @@ zone: ['int', 'ext']
 
 ```
 db.user {
-    ~dev: 'dev-user'
-    ~sit: 'sit-user'
-    ~sit~int: 'sit-int-user'
+    ~uat: 'uat-user'
+    ~uat~int: 'uat-int-user'
     ~default: 'user'
 }
+...
 ```
 
 Using these files, it generates:
@@ -33,21 +32,49 @@ Using these files, it generates:
 
 ```java
 public class SmartConfigDimension {
-    public interface TIER {
+    public interface Tier {
         static final String PROD = "PROD";
         static final String UAT = "UAT";
-        static final String SIT = "SIT";
     }
     
-    public interface LOCATION {
-        static final String SG = "SG";
-        static final String UK = "UK";
-        static final String US = "US";
-    }
-    
-    public interface ZONE {
+    public interface Zone {
         static final String INT = "INT";
         static final String EXT = "EXT";
+    }
+}
+```
+
+2. Schema class
+
+```java
+public interface SmartConfig {
+    String getDbUser();
+}
+```
+
+3. Properties distribution class
+
+```java
+public class SmartConfigDistribution {
+    public class TierUat_ZoneInt_SmartConfig implements SmartConfig {
+        String getDbUser() {
+            return "uat-int-user";
+        }
+        ...
+    }
+    
+    public interface TierUat_ZoneExt_SmartConfig implements SmartConfig {
+        String getDbUser() {
+            return "uat-user";
+        }
+        ...
+    }
+    
+    public interface TierUat_ZoneAny_SmartConfig implements SmartConfig {
+        String getDbUser() {
+            return "uat-user";
+        }
+        ...
     }
 }
 ```
