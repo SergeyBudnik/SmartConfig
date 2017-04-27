@@ -57,67 +57,15 @@ public interface SmartConfig {
 ```java
 public class SmartConfigDistribution {
     class TierUat_ZoneInt_SmartConfig implements SmartConfig {
-        String getDbUser() {
-            return "uat-int-user";
+        private static final SmartConfigProperty<String> v = new SmartConfigProperty<String>("uat-int-user");
+    
+        public SmartConfigProperty<String> getDbUser() {
+            return v;
         }
         ...
     }
     
-    interface TierUat_ZoneExt_SmartConfig implements SmartConfig {
-        String getDbUser() {
-            return "uat-user";
-        }
-        ...
-    }
-    
-    interface TierUat_ZoneAny_SmartConfig implements SmartConfig {
-        String getDbUser() {
-            return "uat-user";
-        }
-        ...
-    }
-    
-    class TierProd_ZoneInt_SmartConfig implements SmartConfig {
-        String getDbUser() {
-            return "user";
-        }
-        ...
-    }
-    
-    class TierProd_ZoneExt_SmartConfig implements SmartConfig {
-        String getDbUser() {
-            return "user";
-        }
-        ...
-    }
-    
-    class TierProd_ZoneAny_SmartConfig implements SmartConfig {
-        String getDbUser() {
-            return "user";
-        }
-        ...
-    }
-    
-    public class TierAny_ZoneInt_SmartConfig implements SmartConfig {
-        String getDbUser() {
-            return "user";
-        }
-        ...
-    }
-    
-    class TierAny_ZoneExt_SmartConfig implements SmartConfig {
-        String getDbUser() {
-            return "user";
-        }
-        ...
-    }
-    
-    class TierAny_ZoneAny_SmartConfig implements SmartConfig {
-        String getDbUser() {
-            return "user";
-        }
-        ...
-    }
+    ... and so on ...
     
     public SmartConfig get(Optional<String> tier, Optional<String> zone) {
         // Smart code goes here
@@ -130,7 +78,15 @@ So now you just need to get a property your configuration instance:
 ```java
 ...
 SmartConfig smartConfig = new SmartConfigDistribution().get(Optional.of("PROD"), Optional.empty());
-String dbUser = smartConfig.getDbUser();
+String dbUser = smartConfig.getDbUser().val();
+...
+```
+
+And if you want to override a property, simply do:
+
+```java
+...
+smartConfig.getDbUser().override("hello!");
 ...
 ```
 
