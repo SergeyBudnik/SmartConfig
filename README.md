@@ -4,6 +4,14 @@
 
 TBD
 
+### Main features ###
+
+1. Access values by variables, rather than by string keys!
+2. Schema validation
+3. Easy to extend with new dimensions
+4. 100% typesafe
+5. 200% smart
+
 ### Usage
 
 SmartConfig requires two files to function:
