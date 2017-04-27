@@ -26,7 +26,7 @@ db.user {
 ...
 ```
 
-Using these files, it generates:
+Using these files, SmartConfig plugin generates:
 
 1. Dimensions class:
 
@@ -56,27 +56,82 @@ public interface SmartConfig {
 
 ```java
 public class SmartConfigDistribution {
-    public class TierUat_ZoneInt_SmartConfig implements SmartConfig {
+    class TierUat_ZoneInt_SmartConfig implements SmartConfig {
         String getDbUser() {
             return "uat-int-user";
         }
         ...
     }
     
-    public interface TierUat_ZoneExt_SmartConfig implements SmartConfig {
+    interface TierUat_ZoneExt_SmartConfig implements SmartConfig {
         String getDbUser() {
             return "uat-user";
         }
         ...
     }
     
-    public interface TierUat_ZoneAny_SmartConfig implements SmartConfig {
+    interface TierUat_ZoneAny_SmartConfig implements SmartConfig {
         String getDbUser() {
             return "uat-user";
         }
         ...
     }
+    
+    class TierProd_ZoneInt_SmartConfig implements SmartConfig {
+        String getDbUser() {
+            return "user";
+        }
+        ...
+    }
+    
+    class TierProd_ZoneExt_SmartConfig implements SmartConfig {
+        String getDbUser() {
+            return "user";
+        }
+        ...
+    }
+    
+    class TierProd_ZoneAny_SmartConfig implements SmartConfig {
+        String getDbUser() {
+            return "user";
+        }
+        ...
+    }
+    
+    public class TierAny_ZoneInt_SmartConfig implements SmartConfig {
+        String getDbUser() {
+            return "user";
+        }
+        ...
+    }
+    
+    class TierAny_ZoneExt_SmartConfig implements SmartConfig {
+        String getDbUser() {
+            return "user";
+        }
+        ...
+    }
+    
+    class TierAny_ZoneAny_SmartConfig implements SmartConfig {
+        String getDbUser() {
+            return "user";
+        }
+        ...
+    }
+    
+    public SmartConfig get(Optional<String> tier, Optional<String> zone) {
+        // Smart code goes here
+    }
 }
+```
+
+So now you just need to get a property your configuration instance:
+
+```java
+...
+SmartConfig smartConfig = new SmartConfigDistribution().get(Optional.of("PROD"), Optional.empty());
+String dbUser = smartConfig.getDbUser();
+...
 ```
 
 ### Integration
