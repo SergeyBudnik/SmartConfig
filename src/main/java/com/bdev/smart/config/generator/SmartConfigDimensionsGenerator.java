@@ -1,19 +1,12 @@
 package com.bdev.smart.config.generator;
 
-import com.bdev.smart.config.factory.SmartConfigDimensionsFactory;
 import net.sourceforge.jenesis4java.*;
 
 import java.util.Map;
 import java.util.Set;
 
 public class SmartConfigDimensionsGenerator {
-    public static void generate(VirtualMachine vm, String rootPath, String dimensionsPath) throws Exception {
-        Map<String, Set<String>> dimensions = SmartConfigDimensionsFactory.produce(dimensionsPath);
-
-        generate(vm, rootPath, dimensions);
-    }
-
-    private static void generate(
+    public static void generate(
             VirtualMachine vm,
             String rootPath,
             Map<String, Set<String>> dimensions
