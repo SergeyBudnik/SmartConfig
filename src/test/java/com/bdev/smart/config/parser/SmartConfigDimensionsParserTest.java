@@ -1,20 +1,22 @@
 package com.bdev.smart.config.parser;
 
 import com.bdev.smart.config.data.inner.DimensionInfo;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class SmartConfigDimensionsParserTest {
+public class SmartConfigDimensionsParserTest extends SmartConfigParserTest {
     @Test
     public void testSingleDimensionSingleValue() {
         Map<String, DimensionInfo> dimensionsInfo = SmartConfigDimensionsParser.parse(
-                new File("src/test/resources/dimensions-parser/test-dimension-single-value-single.conf").getPath()
+                getConfigPath(
+                        "dimensions-parser",
+                        "test-dimension-single-value-single"
+                )
         );
 
         assertEquals(1, dimensionsInfo.size());
@@ -25,7 +27,10 @@ public class SmartConfigDimensionsParserTest {
     @Test
     public void testSingleDimensionMultipleValues() {
         Map<String, DimensionInfo> dimensionsInfo = SmartConfigDimensionsParser.parse(
-                new File("src/test/resources/dimensions-parser/test-dimension-single-values-multiple.conf").getPath()
+                getConfigPath(
+                        "dimensions-parser",
+                        "test-dimension-single-values-multiple"
+                )
         );
 
         assertEquals(1, dimensionsInfo.size());
@@ -37,14 +42,20 @@ public class SmartConfigDimensionsParserTest {
     @Test(expected = RuntimeException.class)
     public void testSingleDimensionMultipleValuesConflict() {
         SmartConfigDimensionsParser.parse(
-                new File("src/test/resources/dimensions-parser/test-dimension-single-values-multiple-conflict.conf").getPath()
+                getConfigPath(
+                        "dimensions-parser",
+                        "test-dimension-single-values-multiple-conflict"
+                )
         );
     }
 
     @Test
     public void testMultipleDimensionsSingleValue() {
         Map<String, DimensionInfo> dimensionsInfo = SmartConfigDimensionsParser.parse(
-                new File("src/test/resources/dimensions-parser/test-dimensions-multiple-value-single.conf").getPath()
+                getConfigPath(
+                        "dimensions-parser",
+                        "test-dimensions-multiple-value-single"
+                )
         );
 
         assertEquals(2, dimensionsInfo.size());
@@ -63,14 +74,20 @@ public class SmartConfigDimensionsParserTest {
     @Ignore
     public void testMultipleDimensionsSingleValueNamesConflict() {
         SmartConfigDimensionsParser.parse(
-                new File("src/test/resources/dimensions-parser/test-dimensions-multiple-value-single-names-conflict.conf").getPath()
+                getConfigPath(
+                        "dimensions-parser",
+                        "test-dimensions-multiple-value-single-names-conflict"
+                )
         );
     }
 
     @Test(expected = RuntimeException.class)
     public void testMultipleDimensionsSingleValueValuesConflict() {
         SmartConfigDimensionsParser.parse(
-                new File("src/test/resources/dimensions-parser/test-dimensions-multiple-value-single-values-conflict.conf").getPath()
+                getConfigPath(
+                        "dimensions-parser",
+                        "test-dimensions-multiple-value-single-values-conflict"
+                )
         );
     }
 }

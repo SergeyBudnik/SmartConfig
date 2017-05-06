@@ -7,11 +7,10 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SmartConfigPropertiesParserTest_Dimensions {
+public class SmartConfigPropertiesParserTest_Dimensions extends SmartConfigParserTest {
     @Test
     public void testSingleDimensionForSingleValue() {
         Map<String, DimensionInfo> dimensions = new HashMap<>(); {
@@ -21,7 +20,10 @@ public class SmartConfigPropertiesParserTest_Dimensions {
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
-                new File("src/test/resources/properties-parser/dimension/test-dimension-single-value-single.conf").getPath(),
+                getConfigPath(
+                        "properties-parser/dimension",
+                        "test-dimension-single-value-single"
+                ),
                 dimensions
         );
 
@@ -50,7 +52,10 @@ public class SmartConfigPropertiesParserTest_Dimensions {
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
-                new File("src/test/resources/properties-parser/dimension/test-dimension-single-values-multiple.conf").getPath(),
+                getConfigPath(
+                        "properties-parser/dimension",
+                        "test-dimension-single-values-multiple"
+                ),
                 dimensions
         );
 
@@ -97,7 +102,10 @@ public class SmartConfigPropertiesParserTest_Dimensions {
         }
 
         SmartConfigPropertiesParser.parse(
-                new File("src/test/resources/properties-parser/dimension/test-dimension-unrecognized.conf").getPath(),
+                getConfigPath(
+                        "properties-parser/dimension",
+                        "test-dimension-unrecognized"
+                ),
                 dimensions
         );
     }
@@ -112,7 +120,10 @@ public class SmartConfigPropertiesParserTest_Dimensions {
         }
 
         SmartConfigPropertiesParser.parse(
-                new File("src/test/resources/properties-parser/dimension/test-dimension-single-value-single-conflict.conf").getPath(),
+                getConfigPath(
+                        "properties-parser/dimension",
+                        "test-dimension-single-value-single-conflict"
+                ),
                 dimensions
         );
     }
@@ -134,7 +145,10 @@ public class SmartConfigPropertiesParserTest_Dimensions {
         }
 
         SmartConfigPropertiesParser.parse(
-                new File("src/test/resources/properties-parser/dimension/test-dimensions-multiple-values-multiple-conflict.conf").getPath(),
+                getConfigPath(
+                        "properties-parser/dimension",
+                        "test-dimensions-multiple-values-multiple-conflict"
+                ),
                 dimensions
         );
     }

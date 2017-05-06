@@ -6,12 +6,11 @@ import com.bdev.smart.config.data.inner.PropertyType;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SmartConfigPropertiesParserTest_TypeSafety {
+public class SmartConfigPropertiesParserTest_TypeSafety extends SmartConfigParserTest {
     @Test
     public void testSimpleInteger() {
         Map<String, DimensionInfo> dimensions = new HashMap<>(); {
@@ -21,7 +20,10 @@ public class SmartConfigPropertiesParserTest_TypeSafety {
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
-                new File("src/test/resources/properties-parser/type-safety/test-type-safety-integer.conf").getPath(),
+                getConfigPath(
+                        "properties-parser/type-safety",
+                        "test-type-safety-integer"
+                ),
                 dimensions
         );
 
@@ -48,7 +50,10 @@ public class SmartConfigPropertiesParserTest_TypeSafety {
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
-                new File("src/test/resources/properties-parser/type-safety/test-type-safety-string.conf").getPath(),
+                getConfigPath(
+                        "properties-parser/type-safety",
+                        "test-type-safety-string"
+                ),
                 dimensions
         );
 
@@ -75,7 +80,10 @@ public class SmartConfigPropertiesParserTest_TypeSafety {
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
-                new File("src/test/resources/properties-parser/type-safety/test-type-safety-boolean.conf").getPath(),
+                getConfigPath(
+                        "properties-parser/type-safety",
+                        "test-type-safety-boolean"
+                ),
                 dimensions
         );
 
@@ -102,7 +110,10 @@ public class SmartConfigPropertiesParserTest_TypeSafety {
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
-                new File("src/test/resources/properties-parser/type-safety/test-type-safety-list-of-strings.conf").getPath(),
+                getConfigPath(
+                        "properties-parser/type-safety",
+                        "test-type-safety-list-of-strings"
+                ),
                 dimensions
         );
 
@@ -132,7 +143,10 @@ public class SmartConfigPropertiesParserTest_TypeSafety {
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
-                new File("src/test/resources/properties-parser/type-safety/test-type-safety-list-of-numbers.conf").getPath(),
+                getConfigPath(
+                        "properties-parser/type-safety",
+                        "test-type-safety-list-of-numbers"
+                ),
                 dimensions
         );
 
@@ -162,7 +176,10 @@ public class SmartConfigPropertiesParserTest_TypeSafety {
         }
 
         SmartConfigPropertiesParser.parse(
-                new File("src/test/resources/properties-parser/type-safety/test-type-safety-list-of-mixed.conf").getPath(),
+                getConfigPath(
+                        "properties-parser/type-safety",
+                        "test-type-safety-list-of-mixed"
+                ),
                 dimensions
         );
     }
