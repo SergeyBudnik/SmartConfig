@@ -11,6 +11,7 @@ import com.typesafe.config.ConfigValue;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class SmartConfigPropertiesParser {
@@ -25,11 +26,30 @@ public class SmartConfigPropertiesParser {
                 .getDimensionPropertyInfo()
                 .stream()
                 .map(DimensionPropertyInfo::getDimensions)
-                .forEach(dimensionsNames -> dimensionsNames.forEach(dimensionName -> {
-                    if (!allDimensions.keySet().contains(dimensionName)) {
-                        throw new RuntimeException();
-                    }
-                })));
+                .forEach(dimensionsNames ->
+                        dimensionsNames.forEach(dimensionName -> {
+                                    AtomicBoolean dimensionNameFound = new AtomicBoolean(false);
+
+                                    allDimensions.forEach((allDimensionsElementName, allDimensionsElementValue) -> {
+                                            long matchAmount = allDimensionsElementValue
+                                                    .getDimensions()
+                                                    .stream()
+                                                    .filter(it -> it.equals(dimensionName))
+                                                    .count();
+
+                                            if (matchAmount == 1) {
+                                                dimensionNameFound.set(true);
+                                            } else if (matchAmount > 1) {
+                                                throw new RuntimeException();
+                                            }
+                                        });
+
+                                    if (!dimensionNameFound.get()) {
+                                        throw new RuntimeException();
+                                    }
+                                }
+                        )
+                ));
 
         return res;
     }
