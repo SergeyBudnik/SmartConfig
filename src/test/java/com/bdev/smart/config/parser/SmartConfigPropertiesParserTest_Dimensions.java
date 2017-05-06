@@ -4,6 +4,7 @@ import com.bdev.smart.config.data.inner.DimensionInfo;
 import com.bdev.smart.config.data.inner.PropertyInfo;
 import com.bdev.smart.config.data.inner.PropertyType;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -97,6 +98,43 @@ public class SmartConfigPropertiesParserTest_Dimensions {
 
         SmartConfigPropertiesParser.parse(
                 new File("src/test/resources/properties-parser/dimension/test-dimension-unrecognized.conf").getPath(),
+                dimensions
+        );
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testSingleDimensionForSingleValueConflict() {
+        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
+            dimensions.put("tier", new DimensionInfo()); {
+                dimensions.get("tier").getDimensions().add("sit");
+                dimensions.get("tier").getDimensions().add("uat");
+            }
+        }
+
+        SmartConfigPropertiesParser.parse(
+                new File("src/test/resources/properties-parser/dimension/test-dimension-single-value-single-conflict.conf").getPath(),
+                dimensions
+        );
+    }
+
+    /**
+     * ToDo: to be fixed, probably should be moved to a separate test class with multiple tests.
+     */
+    @Test(expected = RuntimeException.class)
+    @Ignore
+    public void testMultipleDimensionMultipleValuesConflict() {
+        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
+            dimensions.put("tier", new DimensionInfo()); {
+                dimensions.get("tier").getDimensions().add("sit");
+            }
+
+            dimensions.put("zone", new DimensionInfo()); {
+                dimensions.get("zone").getDimensions().add("uk");
+            }
+        }
+
+        SmartConfigPropertiesParser.parse(
+                new File("src/test/resources/properties-parser/dimension/test-dimensions-multiple-values-multiple-conflict.conf").getPath(),
                 dimensions
         );
     }
