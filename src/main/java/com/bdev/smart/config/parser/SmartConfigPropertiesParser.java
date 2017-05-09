@@ -21,7 +21,7 @@ class SmartConfigPropertiesParser {
                 getCollapsedProperties(getRawProperties(propertiesPath));
 
         res.forEach((propertyName, propertyInfo) -> propertyInfo
-                .getDimensionPropertyInfo()
+                .getDimensionsPropertyInfo()
                 .stream()
                 .map(DimensionPropertyInfo::getDimensions)
                 .forEach(dimensionsNames ->
@@ -67,7 +67,7 @@ class SmartConfigPropertiesParser {
 
             PropertyInfo propertyInfo = new PropertyInfo(); {
                 propertyInfo.setType(type);
-                propertyInfo.setDimensionPropertyInfo(rawProperties.get(propertyName));
+                propertyInfo.setDimensionsPropertyInfo(rawProperties.get(propertyName));
             }
 
             collapsedProperties.put(propertyName, propertyInfo);

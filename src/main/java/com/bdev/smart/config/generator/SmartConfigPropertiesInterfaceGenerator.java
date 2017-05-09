@@ -2,8 +2,14 @@ package com.bdev.smart.config.generator;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
 import com.bdev.smart.config.data.inner.PropertyInfo;
-import com.bdev.smart.config.data.inner.PropertyType;
-import net.sourceforge.jenesis4java.*;
+import com.bdev.smart.config.generator.utils.SmartConfigImports;
+import com.bdev.smart.config.generator.utils.SmartConfigNamesMatcher;
+import com.bdev.smart.config.generator.utils.SmartConfigNamespace;
+import com.bdev.smart.config.generator.utils.SmartConfigTypesMatcher;
+import net.sourceforge.jenesis4java.Access;
+import net.sourceforge.jenesis4java.CompilationUnit;
+import net.sourceforge.jenesis4java.Interface;
+import net.sourceforge.jenesis4java.VirtualMachine;
 
 class SmartConfigPropertiesInterfaceGenerator {
     static void generate(
@@ -13,10 +19,10 @@ class SmartConfigPropertiesInterfaceGenerator {
     ) throws Exception {
         CompilationUnit unit = vm.newCompilationUnit(rootPath);
 
-        unit.setNamespace("com.bdev.smart.config");
+        unit.setNamespace(SmartConfigNamespace.VALUE);
 
-        unit.addImport("java.util.List");
-        unit.addImport("com.bdev.smart.config.data.SmartConfigValue");
+        unit.addImport(SmartConfigImports.LIST_IMPORT);
+        unit.addImport(SmartConfigImports.SMART_CONFIG_VALUE_IMPORT);
 
         Interface smartConfigPropertiesInterface = unit.newInterface("SmartConfig");
 
@@ -26,36 +32,11 @@ class SmartConfigPropertiesInterfaceGenerator {
             PropertyInfo propertyInfo = configInfo.getPropertiesInfo().get(propertyName);
 
             smartConfigPropertiesInterface.newMethod(
-                    vm.newType(getType(propertyInfo.getType())),
-                    getMethodName(propertyName)
+                    vm.newType(SmartConfigTypesMatcher.getType(propertyInfo.getType())),
+                    SmartConfigNamesMatcher.getPropertyAccessorName(propertyName)
             );
         }
 
         unit.encode();
-    }
-
-    private static String getMethodName(String propertyName) {
-        return "get" +
-                propertyName.substring(0, 1).toUpperCase() +
-                propertyName.substring(1);
-    }
-
-    private static String getType(PropertyType propertyType) {
-        switch (propertyType) {
-            case NUMBER:
-                return "SmartConfigValue<Long>";
-            case BOOLEAN:
-                return "SmartConfigValue<Boolean>";
-            case STRING:
-                return "SmartConfigValue<String>";
-            case LIST_OF_NUMBERS:
-                return "SmartConfigValue<List<Long>>";
-            case LIST_OF_BOOLEANS:
-                return "SmartConfigValue<List<Boolean>>";
-            case LIST_OF_STRINGS:
-                return "SmartConfigValue<List<String>>";
-        }
-
-        throw new RuntimeException();
     }
 }

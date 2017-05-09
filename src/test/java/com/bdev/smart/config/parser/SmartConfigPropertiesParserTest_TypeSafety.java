@@ -28,10 +28,10 @@ public class SmartConfigPropertiesParserTest_TypeSafety extends SmartConfigParse
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
-        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionPropertyInfo().size());
+        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionsPropertyInfo().size());
 
         Assert.assertEquals(1, propertiesInfo.get("a")
-                        .getDimensionPropertyInfo()
+                        .getDimensionsPropertyInfo()
                         .stream()
                         .filter(it -> it.getValue().equals(3))
                         .filter(it -> it.getType().equals(PropertyType.NUMBER))
@@ -58,10 +58,10 @@ public class SmartConfigPropertiesParserTest_TypeSafety extends SmartConfigParse
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
-        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionPropertyInfo().size());
+        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionsPropertyInfo().size());
 
         Assert.assertEquals(1, propertiesInfo.get("a")
-                        .getDimensionPropertyInfo()
+                        .getDimensionsPropertyInfo()
                         .stream()
                         .filter(it -> it.getValue().equals("hello"))
                         .filter(it -> it.getType().equals(PropertyType.STRING))
@@ -88,10 +88,10 @@ public class SmartConfigPropertiesParserTest_TypeSafety extends SmartConfigParse
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
-        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionPropertyInfo().size());
+        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionsPropertyInfo().size());
 
         Assert.assertEquals(1, propertiesInfo.get("a")
-                        .getDimensionPropertyInfo()
+                        .getDimensionsPropertyInfo()
                         .stream()
                         .filter(it -> it.getValue().equals(false))
                         .filter(it -> it.getType().equals(PropertyType.BOOLEAN))
@@ -118,10 +118,10 @@ public class SmartConfigPropertiesParserTest_TypeSafety extends SmartConfigParse
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
-        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionPropertyInfo().size());
+        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionsPropertyInfo().size());
 
         Assert.assertEquals(1, propertiesInfo.get("a")
-                        .getDimensionPropertyInfo()
+                        .getDimensionsPropertyInfo()
                         .stream()
                         .filter(it -> ((List) it.getValue()).size() == 3)
                         .filter(it -> ((List) it.getValue()).contains("hello_1"))
@@ -151,10 +151,10 @@ public class SmartConfigPropertiesParserTest_TypeSafety extends SmartConfigParse
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
-        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionPropertyInfo().size());
+        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionsPropertyInfo().size());
 
         Assert.assertEquals(1, propertiesInfo.get("a")
-                        .getDimensionPropertyInfo()
+                        .getDimensionsPropertyInfo()
                         .stream()
                         .filter(it -> ((List) it.getValue()).size() == 3)
                         .filter(it -> ((List) it.getValue()).contains(1))

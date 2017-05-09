@@ -2,12 +2,16 @@ package com.bdev.smart.config.generator;
 
 import com.bdev.smart.config.data.inner.*;
 import com.bdev.smart.config.data.util.Tuple;
+import com.bdev.smart.config.generator.utils.SmartConfigImports;
+import com.bdev.smart.config.generator.utils.SmartConfigNamesMatcher;
+import com.bdev.smart.config.generator.utils.SmartConfigNamespace;
+import com.bdev.smart.config.generator.utils.SmartConfigTypesMatcher;
 import net.sourceforge.jenesis4java.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 class SmartConfigPropertiesGenerator {
     static void generate(
@@ -17,33 +21,66 @@ class SmartConfigPropertiesGenerator {
     ) throws Exception {
         CompilationUnit unit = vm.newCompilationUnit(rootPath);
 
-        unit.setNamespace("com.bdev.smart.config");
+        unit.setNamespace(SmartConfigNamespace.VALUE);
+
+        unit.addImport(SmartConfigImports.LIST_IMPORT);
+        unit.addImport(SmartConfigImports.ARRAYS_IMPORT);
 
         unit.addImport(SmartConfigImports.SMART_CONFIG_IMPORT);
+        unit.addImport(SmartConfigImports.SMART_CONFIG_VALUE_IMPORT);
 
         PackageClass smartConfigProperties = unit.newClass("SmartConfigProperties");
 
         smartConfigProperties.setAccess(Access.PUBLIC);
 
-        List<String> dimensionNames = new ArrayList<>(configInfo.getDimensions().keySet());
-
-        f(vm, smartConfigProperties, configInfo, dimensionNames, 0, new Stack<>());
-
+        generateDimensionProperties(vm, smartConfigProperties, configInfo);
         generateGetConfigMethod(vm, smartConfigProperties, configInfo);
 
         unit.encode();
     }
 
-    private static void f(
-            VirtualMachine vm,
-            PackageClass smartConfigProperties,
+    private static void gatherDimensionsMultiplication(
             ConfigInfo configInfo,
             List<String> dimensionNames,
             int dimensionIndex,
-            Stack<String> dimensionValues
-    )  {
+            Stack<Tuple<String, String>> dimensionValues,
+            Consumer<Stack<Tuple<String, String>>> action
+    ) {
         if (dimensionIndex == dimensionNames.size()) {
-            InnerClass dimensionPropertyClass = smartConfigProperties.newInnerClass(getDimensionPropertiesName(dimensionValues));
+            action.accept(dimensionValues);
+        } else {
+            String dimensionName = dimensionNames.get(dimensionIndex);
+
+            DimensionInfo dimensionInfo = configInfo.getDimensions().get(dimensionName);
+
+            for (String dimensionValue : dimensionInfo.getDimensions()) {
+                dimensionValues.push(new Tuple<>(dimensionName, dimensionValue));
+
+                gatherDimensionsMultiplication(
+                        configInfo,
+                        dimensionNames,
+                        dimensionIndex + 1,
+                        dimensionValues,
+                        action
+                );
+
+                dimensionValues.pop();
+            }
+        }
+    }
+
+    private static void generateDimensionProperties(
+            VirtualMachine vm,
+            PackageClass smartConfigPropertiesClass,
+            ConfigInfo configInfo
+    ) {
+        List<String> dimensionNames = new ArrayList<>(configInfo.getDimensions().keySet());
+
+        Consumer<Stack<Tuple<String, String>>> generator = dimensionValues -> {
+            String dimensionPropertiesName = getDimensionPropertiesName(dimensionValues);
+
+            InnerClass dimensionPropertyClass = smartConfigPropertiesClass
+                    .newInnerClass(dimensionPropertiesName);
 
             dimensionPropertyClass.addImplements("SmartConfig");
 
@@ -52,42 +89,45 @@ class SmartConfigPropertiesGenerator {
             for (String propertyName : configInfo.getPropertiesInfo().keySet()) {
                 PropertyInfo propertyInfo = configInfo.getPropertiesInfo().get(propertyName);
 
+                DimensionPropertyInfo dimensionPropertyInfo = propertyInfo
+                        .getMostSuitableProperty(dimensionValues);
+
+                ClassField f = dimensionPropertyClass.newField(
+                        vm.newType(SmartConfigTypesMatcher.getType(propertyInfo.getType())),
+                        propertyName
+                );
+
+                f.setExpression(getPropertyValue(vm, dimensionPropertyInfo));
+
                 ClassMethod getPropertyMethod = dimensionPropertyClass.newMethod(
-                        vm.newType(getType(propertyInfo.getType())),
-                        getMethodName(propertyName)
+                        vm.newType(SmartConfigTypesMatcher.getType(propertyInfo.getType())),
+                        SmartConfigNamesMatcher.getPropertyAccessorName(propertyName)
                 );
 
                 getPropertyMethod.setAccess(Access.PUBLIC);
 
-                DimensionPropertyInfo o = propertyInfo
-                        .getDimensionPropertyInfo()
-                        .iterator()
-                        .next();
-
-                if (propertyInfo.getType() == PropertyType.NUMBER) {
-                    getPropertyMethod.newReturn().setExpression(vm.newVar("" + o.getValue()));
-                }
+                getPropertyMethod.newReturn().setExpression(vm.newVar(propertyName));
             }
-        } else {
-            String dimensionName = dimensionNames.get(dimensionIndex);
 
-            DimensionInfo dimensionInfo = configInfo.getDimensions().get(dimensionName);
+            smartConfigPropertiesClass.newField(vm.newType(dimensionPropertiesName), dimensionPropertiesName);
+        };
 
-            for (String dimensionValue : dimensionInfo.getDimensions()) {
-                dimensionValues.push(dimensionValue);
-
-                f(vm, smartConfigProperties, configInfo, dimensionNames, dimensionIndex + 1, dimensionValues);
-
-                dimensionValues.pop();
-            }
-        }
+        gatherDimensionsMultiplication(
+                configInfo,
+                dimensionNames,
+                0,
+                new Stack<>(),
+                generator
+        );
     }
 
-    private static String getDimensionPropertiesName(List<String> dimensionValues) {
+    private static String getDimensionPropertiesName(
+            Stack<Tuple<String, String>> dimensionValues
+    ) {
         StringBuilder sb = new StringBuilder();
 
-        for (String dimensionValue : dimensionValues) {
-            sb.append(getDimensionValueName(dimensionValue));
+        for (Tuple<String, String> dimensionValue : dimensionValues) {
+            sb.append(getDimensionValueName(dimensionValue.getB()));
         }
 
         sb.append("SmartConfig");
@@ -158,11 +198,7 @@ class SmartConfigPropertiesGenerator {
 
             chooseConfigIf.newReturn().setExpression(vm.newVar(
                     "new " +
-                    getDimensionPropertiesName(dimensionValues
-                            .stream()
-                            .map(Tuple::getB)
-                            .collect(Collectors.toList())
-                    ) +
+                    getDimensionPropertiesName(dimensionValues) +
                     "()"
             ));
         } else {
@@ -180,26 +216,67 @@ class SmartConfigPropertiesGenerator {
         }
     }
 
-    private static String getMethodName(String propertyName) {
-        return "get" +
-                propertyName.substring(0, 1).toUpperCase() +
-                propertyName.substring(1);
+    private static Expression getPropertyValue(
+            VirtualMachine vm,
+            DimensionPropertyInfo dimensionPropertyInfo
+    ) {
+        return vm.newVar(
+                "new SmartConfigValue(" +
+                getUnboxedPropertyValue(dimensionPropertyInfo) +
+                ")"
+        );
     }
 
-    private static String getType(PropertyType propertyType) {
-        switch (propertyType) {
+    private static String getUnboxedPropertyValue(
+            DimensionPropertyInfo dimensionPropertyInfo
+    ) {
+        switch (dimensionPropertyInfo.getType()) {
             case NUMBER:
-                return "long";
             case BOOLEAN:
-                return "boolean";
+                return "" + dimensionPropertyInfo.getValue();
             case STRING:
-                return "String";
+                return "\"" + dimensionPropertyInfo.getValue() + "\"";
+            case LIST_OF_STRINGS: {
+                StringBuilder sb = new StringBuilder();
+
+                sb.append("Arrays.asList(");
+
+                for (Object o : (List) dimensionPropertyInfo.getValue()) {
+                    sb.append("\"");
+                    sb.append(o);
+                    sb.append("\"");
+                    sb.append(", ");
+                }
+
+                sb.deleteCharAt(sb.length() - 1);
+                sb.deleteCharAt(sb.length() - 1);
+
+                sb.append(")");
+
+                System.out.println(sb.toString());
+
+                return sb.toString();
+            }
             case LIST_OF_NUMBERS:
-                return "java.util.List<Long>";
-            case LIST_OF_BOOLEANS:
-                return "java.util.List<Boolean>";
-            case LIST_OF_STRINGS:
-                return "java.util.List<String>";
+            case LIST_OF_BOOLEANS: {
+                StringBuilder sb = new StringBuilder();
+
+                sb.append("Arrays.asList(");
+
+                for (Object o : (List) dimensionPropertyInfo.getValue()) {
+                    sb.append(o);
+                    sb.append(", ");
+                }
+
+                sb.deleteCharAt(sb.length() - 1);
+                sb.deleteCharAt(sb.length() - 1);
+
+                sb.append(")");
+
+                System.out.println(sb.toString());
+
+                return sb.toString();
+            }
         }
 
         throw new RuntimeException();
