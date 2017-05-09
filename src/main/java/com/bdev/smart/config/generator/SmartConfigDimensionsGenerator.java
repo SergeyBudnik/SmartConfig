@@ -1,15 +1,17 @@
 package com.bdev.smart.config.generator;
 
+import com.bdev.smart.config.data.inner.ConfigInfo;
+import com.bdev.smart.config.data.inner.DimensionInfo;
 import net.sourceforge.jenesis4java.*;
 
 import java.util.Map;
 import java.util.Set;
 
-public class SmartConfigDimensionsGenerator {
-    public static void generate(
+class SmartConfigDimensionsGenerator {
+    static void generate(
             VirtualMachine vm,
             String rootPath,
-            Map<String, Set<String>> dimensions
+            ConfigInfo configInfo
     ) throws Exception {
         CompilationUnit unit = vm.newCompilationUnit(rootPath);
 
@@ -17,13 +19,15 @@ public class SmartConfigDimensionsGenerator {
 
         PackageClass smartConfigDimensionClass = unit.newPublicClass("SmartConfigDimension");
 
-        for (String dimensionName : dimensions.keySet()) {
+        for (String dimensionName : configInfo.getDimensions().keySet()) {
             Interface dimensionInterface = smartConfigDimensionClass
                     .newInnerInterface(dimensionName.toUpperCase());
 
             dimensionInterface.setAccess(Access.AccessType.PUBLIC);
 
-            for (String dimensionValue : dimensions.get(dimensionName)) {
+            DimensionInfo dimensionInfo = configInfo.getDimensions().get(dimensionName);
+
+            for (String dimensionValue : dimensionInfo.getDimensions()) {
                 Constant dimensionConstant = dimensionInterface
                         .newConstant(vm.newType("String"), dimensionValue.toUpperCase());
 

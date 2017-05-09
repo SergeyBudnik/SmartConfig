@@ -4,7 +4,6 @@ import com.bdev.smart.config.data.inner.DimensionInfo;
 import com.bdev.smart.config.data.inner.DimensionPropertyInfo;
 import com.bdev.smart.config.data.inner.PropertyInfo;
 import com.bdev.smart.config.data.inner.PropertyType;
-import com.bdev.smart.config.reader.SmartConfigReader;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
@@ -12,10 +11,9 @@ import com.typesafe.config.ConfigValue;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
-public class SmartConfigPropertiesParser {
-    public static Map<String, PropertyInfo> parse(
+class SmartConfigPropertiesParser {
+    static Map<String, PropertyInfo> parse(
             String propertiesPath,
             Map<String, DimensionInfo> allDimensions
     ) {
@@ -28,27 +26,26 @@ public class SmartConfigPropertiesParser {
                 .map(DimensionPropertyInfo::getDimensions)
                 .forEach(dimensionsNames ->
                         dimensionsNames.forEach(dimensionName -> {
-                                    AtomicBoolean dimensionNameFound = new AtomicBoolean(false);
+                            AtomicBoolean dimensionNameFound = new AtomicBoolean(false);
 
-                                    allDimensions.forEach((allDimensionsElementName, allDimensionsElementValue) -> {
-                                            long matchAmount = allDimensionsElementValue
-                                                    .getDimensions()
-                                                    .stream()
-                                                    .filter(it -> it.equals(dimensionName))
-                                                    .count();
+                            allDimensions.forEach((allDimensionsElementName, allDimensionsElementValue) -> {
+                                    long matchAmount = allDimensionsElementValue
+                                            .getDimensions()
+                                            .stream()
+                                            .filter(it -> it.equals(dimensionName))
+                                            .count();
 
-                                            if (matchAmount == 1) {
-                                                dimensionNameFound.set(true);
-                                            } else if (matchAmount > 1) {
-                                                throw new RuntimeException();
-                                            }
-                                        });
-
-                                    if (!dimensionNameFound.get()) {
+                                    if (matchAmount == 1) {
+                                        dimensionNameFound.set(true);
+                                    } else if (matchAmount > 1) {
                                         throw new RuntimeException();
                                     }
-                                }
-                        )
+                            });
+
+                            if (!dimensionNameFound.get()) {
+                                throw new RuntimeException();
+                            }
+                        })
                 ));
 
         return res;

@@ -13,6 +13,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.bdev</groupId>
+            <artifactId>smart.config.data</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>3.0</version>

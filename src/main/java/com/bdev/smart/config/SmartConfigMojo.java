@@ -1,6 +1,8 @@
 package com.bdev.smart.config;
 
+import com.bdev.smart.config.data.inner.ConfigInfo;
 import com.bdev.smart.config.generator.SmartConfigGenerator;
+import com.bdev.smart.config.parser.SmartConfigParser;
 import net.sourceforge.jenesis4java.VirtualMachine;
 import net.sourceforge.jenesis4java.jaloppy.JenesisJalopyEncoder;
 import org.apache.maven.plugin.AbstractMojo;
@@ -45,13 +47,17 @@ public class SmartConfigMojo extends AbstractMojo {
 
     private void generateJavaCode() throws IOException {
         try {
+            ConfigInfo configInfo =
+                    SmartConfigParser.parse(smartConfigDimensions, smartConfigProperties);
+
             SmartConfigGenerator
                     .generate(
                             outputJavaDirectory.getAbsolutePath(),
-                            smartConfigProperties,
-                            smartConfigDimensions
+                            configInfo
                     );
         } catch (Exception e) {
+            e.printStackTrace();
+
             System.out.println("fuck you");
         }
     }

@@ -42,9 +42,7 @@ public class SmartConfigDimensionsParser {
                     }
                 });
 
-        long totalAmount = res.values()
-                .stream()
-                .count();
+        long totalAmount = res.size();
 
         long distinctAmount = res.values()
                 .stream()
