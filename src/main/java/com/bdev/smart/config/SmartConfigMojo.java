@@ -3,8 +3,6 @@ package com.bdev.smart.config;
 import com.bdev.smart.config.data.inner.ConfigInfo;
 import com.bdev.smart.config.generator.SmartConfigGenerator;
 import com.bdev.smart.config.parser.SmartConfigParser;
-import net.sourceforge.jenesis4java.VirtualMachine;
-import net.sourceforge.jenesis4java.jaloppy.JenesisJalopyEncoder;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -18,7 +16,6 @@ import java.io.IOException;
 
 @Mojo(name = "jenesis4java", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class SmartConfigMojo extends AbstractMojo {
-
     @Parameter(property = "project", defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
     @Parameter(property = "outputJavaDirectory", defaultValue = "${project.build.directory}/generated-sources/smart-config", readonly = true, required = true)
@@ -30,18 +27,18 @@ public class SmartConfigMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (this.project != null) {
-            this.project.addCompileSourceRoot(this.outputJavaDirectory.getAbsolutePath());
+        if (project != null) {
+            project.addCompileSourceRoot(outputJavaDirectory.getAbsolutePath());
         }
 
-        if (!this.outputJavaDirectory.mkdirs()) {
-            getLog().error("Could not create source directory!");
-        } else {
-            try {
-                generateJavaCode();
-            } catch (IOException e) {
-                throw new MojoExecutionException("Could not generate Java source code!", e);
-            }
+        if (!outputJavaDirectory.mkdirs()) {
+            throw new RuntimeException("Unable to create new source directory");
+        }
+
+        try {
+            generateJavaCode();
+        } catch (IOException e) {
+            throw new MojoExecutionException("Could not generate Java source code!", e);
         }
     }
 

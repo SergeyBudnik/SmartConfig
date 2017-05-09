@@ -1,4 +1,4 @@
-package com.bdev.smart.config.generator;
+package com.bdev.smart.config.generator.properties;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
 import com.bdev.smart.config.data.inner.PropertyInfo;
@@ -11,8 +11,8 @@ import net.sourceforge.jenesis4java.CompilationUnit;
 import net.sourceforge.jenesis4java.Interface;
 import net.sourceforge.jenesis4java.VirtualMachine;
 
-class SmartConfigPropertiesInterfaceGenerator {
-    static void generate(
+public class PropertiesConfigGenerator {
+    public static void generate(
             VirtualMachine vm,
             String rootPath,
             ConfigInfo configInfo
