@@ -77,7 +77,8 @@ class SmartConfigPropertiesGenerator {
         List<String> dimensionNames = new ArrayList<>(configInfo.getDimensions().keySet());
 
         Consumer<Stack<Tuple<String, String>>> generator = dimensionValues -> {
-            String dimensionPropertiesName = getDimensionPropertiesName(dimensionValues);
+            String dimensionPropertiesName = SmartConfigNamesMatcher
+                    .getDimensionPropertiesClassName(dimensionValues);
 
             InnerClass dimensionPropertyClass = smartConfigPropertiesClass
                     .newInnerClass(dimensionPropertiesName);
@@ -109,7 +110,19 @@ class SmartConfigPropertiesGenerator {
                 getPropertyMethod.newReturn().setExpression(vm.newVar(propertyName));
             }
 
-            smartConfigPropertiesClass.newField(vm.newType(dimensionPropertiesName), dimensionPropertiesName);
+            Field smartConfigPropertiesInstance = smartConfigPropertiesClass.newField(
+                    vm.newType(dimensionPropertiesName),
+                    SmartConfigNamesMatcher.getDimensionPropertiesInstanceName(dimensionValues)
+            );
+
+            smartConfigPropertiesInstance.setAccess(Access.PRIVATE);
+            smartConfigPropertiesInstance.isStatic(true);
+
+            smartConfigPropertiesInstance.setExpression(vm.newVar(
+                    "new " +
+                        SmartConfigNamesMatcher.getDimensionPropertiesClassName(dimensionValues) +
+                    "()"
+            ));
         };
 
         gatherDimensionsMultiplication(
@@ -119,26 +132,6 @@ class SmartConfigPropertiesGenerator {
                 new Stack<>(),
                 generator
         );
-    }
-
-    private static String getDimensionPropertiesName(
-            Stack<Tuple<String, String>> dimensionValues
-    ) {
-        StringBuilder sb = new StringBuilder();
-
-        for (Tuple<String, String> dimensionValue : dimensionValues) {
-            sb.append(getDimensionValueName(dimensionValue.getB()));
-        }
-
-        sb.append("SmartConfig");
-
-        return sb.toString();
-    }
-
-    private static String getDimensionValueName(String dimensionValue) {
-        return
-                dimensionValue.substring(0, 1).toUpperCase() +
-                dimensionValue.substring(1);
     }
 
     private static void generateGetConfigMethod(
@@ -197,9 +190,7 @@ class SmartConfigPropertiesGenerator {
             If chooseConfigIf = getConfigMethod.newIf(e);
 
             chooseConfigIf.newReturn().setExpression(vm.newVar(
-                    "new " +
-                    getDimensionPropertiesName(dimensionValues) +
-                    "()"
+                    SmartConfigNamesMatcher.getDimensionPropertiesInstanceName(dimensionValues)
             ));
         } else {
             String dimensionName = dimensionNames.get(dimensionIndex);
@@ -222,7 +213,7 @@ class SmartConfigPropertiesGenerator {
     ) {
         return vm.newVar(
                 "new SmartConfigValue(" +
-                getUnboxedPropertyValue(dimensionPropertyInfo) +
+                    getUnboxedPropertyValue(dimensionPropertyInfo) +
                 ")"
         );
     }
@@ -236,27 +227,7 @@ class SmartConfigPropertiesGenerator {
                 return "" + dimensionPropertyInfo.getValue();
             case STRING:
                 return "\"" + dimensionPropertyInfo.getValue() + "\"";
-            case LIST_OF_STRINGS: {
-                StringBuilder sb = new StringBuilder();
-
-                sb.append("Arrays.asList(");
-
-                for (Object o : (List) dimensionPropertyInfo.getValue()) {
-                    sb.append("\"");
-                    sb.append(o);
-                    sb.append("\"");
-                    sb.append(", ");
-                }
-
-                sb.deleteCharAt(sb.length() - 1);
-                sb.deleteCharAt(sb.length() - 1);
-
-                sb.append(")");
-
-                System.out.println(sb.toString());
-
-                return sb.toString();
-            }
+            case LIST_OF_STRINGS:
             case LIST_OF_NUMBERS:
             case LIST_OF_BOOLEANS: {
                 StringBuilder sb = new StringBuilder();
@@ -264,7 +235,14 @@ class SmartConfigPropertiesGenerator {
                 sb.append("Arrays.asList(");
 
                 for (Object o : (List) dimensionPropertyInfo.getValue()) {
-                    sb.append(o);
+                    if (dimensionPropertyInfo.getType() == PropertyType.LIST_OF_STRINGS) {
+                        sb.append("\"");
+                        sb.append(o);
+                        sb.append("\"");
+                    } else {
+                        sb.append(o);
+                    }
+
                     sb.append(", ");
                 }
 
