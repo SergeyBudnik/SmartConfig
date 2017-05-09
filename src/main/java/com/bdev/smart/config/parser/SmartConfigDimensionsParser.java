@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class SmartConfigDimensionsParser {
-    public static Map<String, DimensionInfo> parse(String filePath) {
+class SmartConfigDimensionsParser {
+    static Map<String, DimensionInfo> parse(String filePath) {
         Map<String, DimensionInfo> res = new HashMap<>();
 
         SmartConfigReader

@@ -4,7 +4,6 @@ import com.bdev.smart.config.data.inner.DimensionInfo;
 import com.bdev.smart.config.data.inner.PropertyInfo;
 import com.bdev.smart.config.data.inner.PropertyType;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -12,7 +11,7 @@ import java.util.Map;
 
 public class SmartConfigPropertiesParserTest_Dimensions extends SmartConfigParserTest {
     @Test
-    public void testSingleDimensionForSingleValue() {
+    public void testPropertyWithSingleValueWithSingleDimension() {
         Map<String, DimensionInfo> dimensions = new HashMap<>(); {
             dimensions.put("tier", new DimensionInfo()); {
                 dimensions.get("tier").getDimensions().add("sit");
@@ -22,7 +21,7 @@ public class SmartConfigPropertiesParserTest_Dimensions extends SmartConfigParse
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/dimension",
-                        "test-dimension-single-value-single"
+                        "test-property-with-single-value-with-single-dimension"
                 ),
                 dimensions
         );
@@ -42,7 +41,42 @@ public class SmartConfigPropertiesParserTest_Dimensions extends SmartConfigParse
     }
 
     @Test
-    public void testSingleDimensionForMultipleValues() {
+    public void testPropertyWithSingleValueWithMultipleDimensions() {
+        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
+            dimensions.put("tier", new DimensionInfo()); {
+                dimensions.get("tier").getDimensions().add("sit");
+            }
+
+            dimensions.put("zone", new DimensionInfo()); {
+                dimensions.get("zone").getDimensions().add("uk");
+            }
+        }
+
+        Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
+                getConfigPath(
+                        "properties-parser/dimension",
+                        "test-property-with-single-value-with-multiple-dimensions"
+                ),
+                dimensions
+        );
+
+        Assert.assertEquals(1, propertiesInfo.size());
+        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionsPropertyInfo().size());
+
+        Assert.assertEquals(1, propertiesInfo.get("a")
+                .getDimensionsPropertyInfo()
+                .stream()
+                .filter(it -> it.getValue().equals(1))
+                .filter(it -> it.getType().equals(PropertyType.NUMBER))
+                .filter(it -> it.getDimensions().size() == 2)
+                .filter(it -> it.getDimensions().contains("sit"))
+                .filter(it -> it.getDimensions().contains("uk"))
+                .count()
+        );
+    }
+
+    @Test
+    public void testPropertyWithMultipleValues() {
         Map<String, DimensionInfo> dimensions = new HashMap<>(); {
             dimensions.put("tier", new DimensionInfo()); {
                 dimensions.get("tier").getDimensions().add("sit");
@@ -54,7 +88,7 @@ public class SmartConfigPropertiesParserTest_Dimensions extends SmartConfigParse
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/dimension",
-                        "test-dimension-single-values-multiple"
+                        "test-property-with-multiple-values"
                 ),
                 dimensions
         );
@@ -94,7 +128,7 @@ public class SmartConfigPropertiesParserTest_Dimensions extends SmartConfigParse
     }
 
     @Test(expected = RuntimeException.class)
-    public void testUnrecognizedDimension() {
+    public void testPropertyWithUnrecognizedDimension() {
         Map<String, DimensionInfo> dimensions = new HashMap<>(); {
             dimensions.put("tier", new DimensionInfo()); {
                 dimensions.get("tier").getDimensions().add("sit");
@@ -104,14 +138,14 @@ public class SmartConfigPropertiesParserTest_Dimensions extends SmartConfigParse
         SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/dimension",
-                        "test-dimension-unrecognized"
+                        "test-property-with-unrecognized-dimension"
                 ),
                 dimensions
         );
     }
 
     @Test(expected = RuntimeException.class)
-    public void testSingleDimensionForSingleValueConflict() {
+    public void testPropertyWithSingleValueWithMultipleDimensionsWithConflict() {
         Map<String, DimensionInfo> dimensions = new HashMap<>(); {
             dimensions.put("tier", new DimensionInfo()); {
                 dimensions.get("tier").getDimensions().add("sit");
@@ -122,32 +156,7 @@ public class SmartConfigPropertiesParserTest_Dimensions extends SmartConfigParse
         SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/dimension",
-                        "test-dimension-single-value-single-conflict"
-                ),
-                dimensions
-        );
-    }
-
-    /**
-     * ToDo: to be fixed, probably should be moved to a separate test class with multiple tests.
-     */
-    @Test(expected = RuntimeException.class)
-    @Ignore
-    public void testMultipleDimensionMultipleValuesConflict() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
-            }
-
-            dimensions.put("zone", new DimensionInfo()); {
-                dimensions.get("zone").getDimensions().add("uk");
-            }
-        }
-
-        SmartConfigPropertiesParser.parse(
-                getConfigPath(
-                        "properties-parser/dimension",
-                        "test-dimensions-multiple-values-multiple-conflict"
+                        "test-property-with-single-value-with-multiple-dimensions-with-conflict"
                 ),
                 dimensions
         );

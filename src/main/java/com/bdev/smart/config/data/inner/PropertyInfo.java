@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Data
 public class PropertyInfo {
     private PropertyType type;
+    private DimensionPropertyInfo defaultPropertyInfo;
     private Collection<DimensionPropertyInfo> dimensionsPropertyInfo;
 
     // ToDo: Test
@@ -42,7 +43,7 @@ public class PropertyInfo {
                 .map(Tuple::getB)
                 .collect(Collectors.toList());
 
-        if (dimensionPropertiesWithMaxWeight.size() == 0) {
+        if (dimensionPropertiesWithMaxWeight.size() <= 0) {
             dimensionsValues
                     .stream()
                     .map(Tuple::getB)
@@ -61,6 +62,17 @@ public class PropertyInfo {
             List<Tuple<String, String>> dimensionsValues
     ) {
         int weight = 0;
+
+        for (String dimension : dimensionPropertyInfo.getDimensions()) {
+            boolean dimensionSuitable = dimensionsValues
+                    .stream()
+                    .map(Tuple::getB)
+                    .anyMatch(it -> it.equals(dimension));
+
+            if (!dimensionSuitable) {
+                return -1;
+            }
+        }
 
         for (Tuple<String, String> dimensionValueInfo : dimensionsValues) {
             String dimensionValue = dimensionValueInfo.getB();

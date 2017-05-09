@@ -4,6 +4,7 @@ import com.bdev.smart.config.data.inner.DimensionInfo;
 import com.bdev.smart.config.data.inner.DimensionPropertyInfo;
 import com.bdev.smart.config.data.inner.PropertyInfo;
 import com.bdev.smart.config.data.inner.PropertyType;
+import com.bdev.smart.config.exceptions.DimensionDoesNotExistException;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
@@ -43,7 +44,10 @@ class SmartConfigPropertiesParser {
                             });
 
                             if (!dimensionNameFound.get()) {
-                                throw new RuntimeException();
+                                throw new DimensionDoesNotExistException(
+                                        propertyName,
+                                        dimensionName
+                                );
                             }
                         })
                 ));
@@ -173,14 +177,16 @@ class SmartConfigPropertiesParser {
     private static List<String> extractDimensions(String [] propertyKeyParts) {
         List<String> dimensions = new ArrayList<>();
 
-        for (int i = 1; i < propertyKeyParts.length; i++) {
-            dimensions.add(normalizeDimension(propertyKeyParts[i]));
+        String [] rawDimensions = propertyKeyParts[1].replace("\"", "").split("~");
+
+        for (String rawDimension : rawDimensions) {
+            String trimmedRawDimension = rawDimension.trim();
+
+            if (!trimmedRawDimension.isEmpty()) {
+                dimensions.add(trimmedRawDimension);
+            }
         }
 
         return dimensions;
-    }
-
-    private static String normalizeDimension(String s) {
-        return s.replace('\"', ' ').replace('~', ' ').trim();
     }
 }
