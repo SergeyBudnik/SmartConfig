@@ -6,11 +6,9 @@ TBD
 
 ### Main features ###
 
-1. Access values by variables, rather than by string keys!
-2. Schema validation
-3. Easy to extend with new dimensions
-4. 100% typesafe
-5. 200% smart
+1. True typesafe configuration
+2. Strong properties validation
+3. Possibility to subscribe to properties change
 
 ### Usage
 
@@ -19,83 +17,57 @@ SmartConfig requires two files to function:
 1. Dimensions:
 
 ```
-tier: ['uat', 'prod']
-zone: ['int', 'ext']
+tier: [sit, uat]
+location: [us, uk, sg]
 ```
 
 2. Properties:
 
 ```
-db.user {
-    ~uat: 'uat-user'
-    ~uat~int: 'uat-int-user'
-    ~default: 'user'
+test1 {
+    ~sit = 31
+    ~uat = 33
+}
+
+test2 {
+    ~sit = "test"
+    ~uat = "user"
+}
+
+test3 {
+    ~sit = [1, 2, 3]
+}
+
+test4 {
+    ~sit = [a, b, c]
 }
 ...
 ```
 
-Using these files, SmartConfig plugin generates:
+After plugin execution, you will be able to work with properties in a following way:
 
-1. Dimensions class:
+```
+SmartConfig smartConfig = SmartConfigProperties.getConfig("sit", "uk");
 
-```java
-public class SmartConfigDimension {
-    public interface Tier {
-        static final String PROD = "PROD";
-        static final String UAT = "UAT";
-    }
-    
-    public interface Zone {
-        static final String INT = "INT";
-        static final String EXT = "EXT";
-    }
-}
+SmartConfigValue<Long> test1 = smartConfig.getTest1();
+SmartConfigValue<String> test2 = smartConfig.getTest2();
+SmartConfigValue<List<Long>> test3 = smartConfig.getTest3();
+
+System.out.println(test1.getValue()); // Prints '31'
 ```
 
-2. Schema class
+SmartConfig allows to override properties and even subscribe to their changes
 
-```java
-public interface SmartConfig {
-    String getDbUser();
-}
 ```
+SmartConfig smartConfig = SmartConfigProperties.getConfig("sit", "uk");
 
-3. Properties distribution class
+SmartConfigValue<Long> test1 = smartConfig.getTest1();
 
-```java
-public class SmartConfigDistribution {
-    class TierUat_ZoneInt_SmartConfig implements SmartConfig {
-        private static final SmartConfigProperty<String> v = new SmartConfigProperty<String>("uat-int-user");
-    
-        public SmartConfigProperty<String> getDbUser() {
-            return v;
-        }
-        ...
-    }
-    
-    ... and so on ...
-    
-    public SmartConfig get(Optional<String> tier, Optional<String> zone) {
-        // Smart code goes here
-    }
-}
-```
+System.out.println(test1.getValue()); // Prints '31'
 
-So now you just need to get a property your configuration instance:
+test1.subscribe(it -> System.out::println); // Subscribe to value change
+test1.override(32); // Override the value. Subscriber will print '32'
 
-```java
-...
-SmartConfig smartConfig = new SmartConfigDistribution().get(Optional.of("PROD"), Optional.empty());
-String dbUser = smartConfig.getDbUser().val();
-...
-```
-
-And if you want to override a property, simply do:
-
-```java
-...
-smartConfig.getDbUser().override("hello!");
-...
 ```
 
 ### Integration
