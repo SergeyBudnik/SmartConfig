@@ -1,8 +1,8 @@
 package com.bdev.smart.config.generator.properties;
 
 import com.bdev.smart.config.data.inner.*;
-import com.bdev.smart.config.data.inner.property.DimensionPropertyInfo;
-import com.bdev.smart.config.data.inner.property.PropertyInfo;
+import com.bdev.smart.config.data.inner.property.DimensionProperty;
+import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import com.bdev.smart.config.data.util.Tuple;
 import com.bdev.smart.config.generator.utils.SmartConfigImports;
@@ -63,22 +63,22 @@ public class PropertiesConfigContainerGenerator {
             dimensionPropertyClass.setAccess(Access.PRIVATE);
             dimensionPropertyClass.isStatic(true);
 
-            for (String propertyName : configInfo.getPropertiesInfo().keySet()) {
-                PropertyInfo propertyInfo = configInfo.getPropertiesInfo().get(propertyName);
+            for (String propertyName : configInfo.getPropertiesInfo().getAllProperties().keySet()) {
+                Property property = configInfo.getPropertiesInfo().getAllProperties().get(propertyName);
 
-                DimensionPropertyInfo dimensionPropertyInfo = propertyInfo
+                DimensionProperty dimensionProperty = property
                         .getMostSuitableProperty(dimensionValues);
 
                 ClassField f = dimensionPropertyClass.newField(
-                        vm.newType(SmartConfigTypesMatcher.getType(propertyInfo.getType())),
+                        vm.newType(SmartConfigTypesMatcher.getType(property.getType())),
                         propertyName
                 );
 
                 f.setAccess(Access.PRIVATE);
-                f.setExpression(getPropertyValue(vm, dimensionPropertyInfo));
+                f.setExpression(getPropertyValue(vm, dimensionProperty));
 
                 ClassMethod getPropertyMethod = dimensionPropertyClass.newMethod(
-                        vm.newType(SmartConfigTypesMatcher.getType(propertyInfo.getType())),
+                        vm.newType(SmartConfigTypesMatcher.getType(property.getType())),
                         SmartConfigNamesMatcher.getPropertyAccessorName(propertyName)
                 );
 
@@ -113,24 +113,24 @@ public class PropertiesConfigContainerGenerator {
 
     private static Expression getPropertyValue(
             VirtualMachine vm,
-            DimensionPropertyInfo dimensionPropertyInfo
+            DimensionProperty dimensionProperty
     ) {
         return vm.newVar(
                 "new SmartConfigValue(" +
-                    getUnboxedPropertyValue(dimensionPropertyInfo) +
+                    getUnboxedPropertyValue(dimensionProperty) +
                 ")"
         );
     }
 
     private static String getUnboxedPropertyValue(
-            DimensionPropertyInfo dimensionPropertyInfo
+            DimensionProperty dimensionProperty
     ) {
-        switch (dimensionPropertyInfo.getType()) {
+        switch (dimensionProperty.getType()) {
             case NUMBER:
             case BOOLEAN:
-                return "" + dimensionPropertyInfo.getValue();
+                return "" + dimensionProperty.getValue();
             case STRING:
-                return "\"" + dimensionPropertyInfo.getValue() + "\"";
+                return "\"" + dimensionProperty.getValue() + "\"";
             case LIST_OF_STRINGS:
             case LIST_OF_NUMBERS:
             case LIST_OF_BOOLEANS: {
@@ -138,8 +138,8 @@ public class PropertiesConfigContainerGenerator {
 
                 sb.append("Arrays.asList(");
 
-                for (Object o : (List) dimensionPropertyInfo.getValue()) {
-                    if (dimensionPropertyInfo.getType() == PropertyType.LIST_OF_STRINGS) {
+                for (Object o : (List) dimensionProperty.getValue()) {
+                    if (dimensionProperty.getType() == PropertyType.LIST_OF_STRINGS) {
                         sb.append("\"");
                         sb.append(o);
                         sb.append("\"");

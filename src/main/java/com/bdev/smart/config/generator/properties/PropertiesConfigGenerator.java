@@ -1,7 +1,7 @@
 package com.bdev.smart.config.generator.properties;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
-import com.bdev.smart.config.data.inner.property.PropertyInfo;
+import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.generator.utils.SmartConfigImports;
 import com.bdev.smart.config.generator.utils.SmartConfigNamesMatcher;
 import com.bdev.smart.config.generator.utils.SmartConfigNamespace;
@@ -28,11 +28,11 @@ public class PropertiesConfigGenerator {
 
         smartConfigPropertiesInterface.setAccess(Access.PUBLIC);
 
-        for (String propertyName : configInfo.getPropertiesInfo().keySet()) {
-            PropertyInfo propertyInfo = configInfo.getPropertiesInfo().get(propertyName);
+        for (String propertyName : configInfo.getPropertiesInfo().getAllProperties().keySet()) {
+            Property property = configInfo.getPropertiesInfo().getAllProperties().get(propertyName);
 
             smartConfigPropertiesInterface.newMethod(
-                    vm.newType(SmartConfigTypesMatcher.getType(propertyInfo.getType())),
+                    vm.newType(SmartConfigTypesMatcher.getType(property.getType())),
                     SmartConfigNamesMatcher.getPropertyAccessorName(propertyName)
             );
         }

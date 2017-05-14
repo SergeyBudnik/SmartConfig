@@ -1,8 +1,9 @@
 package com.bdev.smart.config.parser;
 
 import com.bdev.smart.config.data.inner.dimension.AllDimensions;
-import com.bdev.smart.config.data.inner.property.DimensionPropertyInfo;
-import com.bdev.smart.config.data.inner.property.PropertyInfo;
+import com.bdev.smart.config.data.inner.property.AllProperties;
+import com.bdev.smart.config.data.inner.property.DimensionProperty;
+import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -12,17 +13,17 @@ import java.io.File;
 import java.util.*;
 
 class SmartConfigPropertiesParser {
-    static Map<String, PropertyInfo> parse(
+    static AllProperties parse(
             String propertiesPath,
             AllDimensions allDimensions
     ) {
-        Map<String, PropertyInfo> res =
+        AllProperties res =
                 getCollapsedProperties(getRawProperties(propertiesPath));
 
-        res.forEach((propertyName, propertyInfo) -> propertyInfo
+        res.getAllProperties().forEach((propertyName, propertyInfo) -> propertyInfo
                 .getDimensionsPropertyInfo()
                 .stream()
-                .map(DimensionPropertyInfo::getDimensions)
+                .map(DimensionProperty::getDimensions)
                 .forEach(dimensionsNames ->
                         dimensionsNames.forEach(dimensionName -> {
                             allDimensions.findDimensionByValue(dimensionName);
@@ -32,62 +33,52 @@ class SmartConfigPropertiesParser {
         return res;
     }
 
-    private static Map<String, PropertyInfo> getCollapsedProperties(
-            Map<String, List<DimensionPropertyInfo>> rawProperties
-    ) {
-        Map<String, PropertyInfo> collapsedProperties = new HashMap<>();
+    private static AllProperties getCollapsedProperties(AllProperties properties) {
+        for (String propertyName : properties.getAllProperties().keySet()) {
+            Property property = properties.getAllProperties().get(propertyName);
 
-        for (String propertyName : rawProperties.keySet()) {
             PropertyType type = null;
 
-            for (DimensionPropertyInfo dimensionPropertyInfo : rawProperties.get(propertyName)) {
+            for (DimensionProperty dimensionProperty : property.getDimensionsPropertyInfo()) {
                 if (type == null) {
-                    type = dimensionPropertyInfo.getType();
+                    type = dimensionProperty.getType();
                 }
             }
 
-            PropertyInfo propertyInfo = new PropertyInfo(); {
-                propertyInfo.setType(type);
-                propertyInfo.setDimensionsPropertyInfo(rawProperties.get(propertyName));
-            }
-
-            collapsedProperties.put(propertyName, propertyInfo);
+            property.setType(type);
         }
 
-        return collapsedProperties;
+        return properties;
     }
 
-    private static Map<String, List<DimensionPropertyInfo>> getRawProperties(String propertiesPath) {
+    private static AllProperties getRawProperties(String propertiesPath) {
         Config config = ConfigFactory.parseFile(new File(propertiesPath));
 
-        Map<String, List<DimensionPropertyInfo>> rawProperties = new HashMap<>();
+        AllProperties allProperties = new AllProperties();
 
         config
                 .entrySet()
-                .forEach(property -> {
-                    String [] propertyKeyParts = splitKey(property.getKey());
+                .forEach(configProperty -> {
+                    String [] propertyKeyParts = splitKey(configProperty.getKey());
 
                     String propertyName = extractPropertyName(propertyKeyParts);
                     List<String> dimensions = extractDimensions(propertyKeyParts);
 
-                    DimensionPropertyInfo dimensionPropertyInfo = new DimensionPropertyInfo(); {
-                        Object value = config.getAnyRef(property.getKey());
-                        PropertyType propertyType = getType(property.getValue(), value);
+                    DimensionProperty dimensionProperty = new DimensionProperty(); {
+                        Object value = config.getAnyRef(configProperty.getKey());
+                        PropertyType propertyType = getType(configProperty.getValue(), value);
 
-                        dimensionPropertyInfo.setDimensions(new HashSet<>(dimensions));
-                        dimensionPropertyInfo.setValue(value);
-                        dimensionPropertyInfo.setType(propertyType);
+                        dimensionProperty.setDimensions(new HashSet<>(dimensions));
+                        dimensionProperty.setValue(value);
+                        dimensionProperty.setType(propertyType);
                     }
 
-                    List<DimensionPropertyInfo> dimensionsPropertyInfo = rawProperties
-                            .getOrDefault(propertyName, new ArrayList<>());
-
-                    dimensionsPropertyInfo.add(dimensionPropertyInfo);
-
-                    rawProperties.put(propertyName, dimensionsPropertyInfo);
+                    allProperties
+                            .findOrCreateProperty(propertyName)
+                            .addDimensionProperty(dimensionProperty);
                 });
 
-        return rawProperties;
+        return allProperties;
     }
 
     private static PropertyType getType(ConfigValue configValue, Object value) {

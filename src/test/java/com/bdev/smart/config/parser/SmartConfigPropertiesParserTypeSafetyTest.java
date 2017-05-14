@@ -1,7 +1,8 @@
 package com.bdev.smart.config.parser;
 
 import com.bdev.smart.config.data.inner.dimension.AllDimensions;
-import com.bdev.smart.config.data.inner.property.PropertyInfo;
+import com.bdev.smart.config.data.inner.property.AllProperties;
+import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
             allDimensions.addDimension("tier").addValue("sit");
         }
 
-        Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
+        AllProperties allProperties = SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/type-safety",
                         "test-type-safety-integer"
@@ -24,10 +25,10 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                 allDimensions
         );
 
-        Assert.assertEquals(1, propertiesInfo.size());
-        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionsPropertyInfo().size());
+        Assert.assertEquals(1, allProperties.getAllProperties().size());
+        Assert.assertEquals(1, allProperties.getAllProperties().get("a").getDimensionsPropertyInfo().size());
 
-        Assert.assertEquals(1, propertiesInfo.get("a")
+        Assert.assertEquals(1, allProperties.getAllProperties().get("a")
                         .getDimensionsPropertyInfo()
                         .stream()
                         .filter(it -> it.getValue().equals(3))
@@ -44,7 +45,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
             allDimensions.addDimension("tier").addValue("sit");
         }
 
-        Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
+        AllProperties allProperties = SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/type-safety",
                         "test-type-safety-string"
@@ -52,10 +53,10 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                 allDimensions
         );
 
-        Assert.assertEquals(1, propertiesInfo.size());
-        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionsPropertyInfo().size());
+        Assert.assertEquals(1, allProperties.getAllProperties().size());
+        Assert.assertEquals(1, allProperties.getAllProperties().get("a").getDimensionsPropertyInfo().size());
 
-        Assert.assertEquals(1, propertiesInfo.get("a")
+        Assert.assertEquals(1, allProperties.getAllProperties().get("a")
                         .getDimensionsPropertyInfo()
                         .stream()
                         .filter(it -> it.getValue().equals("hello"))
@@ -72,7 +73,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
             allDimensions.addDimension("tier").addValue("sit");
         }
 
-        Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
+        AllProperties allProperties = SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/type-safety",
                         "test-type-safety-boolean"
@@ -80,10 +81,10 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                 allDimensions
         );
 
-        Assert.assertEquals(1, propertiesInfo.size());
-        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionsPropertyInfo().size());
+        Assert.assertEquals(1, allProperties.getAllProperties().size());
+        Assert.assertEquals(1, allProperties.getAllProperties().get("a").getDimensionsPropertyInfo().size());
 
-        Assert.assertEquals(1, propertiesInfo.get("a")
+        Assert.assertEquals(1, allProperties.getAllProperties().get("a")
                         .getDimensionsPropertyInfo()
                         .stream()
                         .filter(it -> it.getValue().equals(false))
@@ -100,7 +101,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
             allDimensions.addDimension("tier").addValue("sit");
         }
 
-        Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
+        AllProperties allProperties = SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/type-safety",
                         "test-type-safety-list-of-strings"
@@ -108,10 +109,10 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                 allDimensions
         );
 
-        Assert.assertEquals(1, propertiesInfo.size());
-        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionsPropertyInfo().size());
+        Assert.assertEquals(1, allProperties.getAllProperties().size());
+        Assert.assertEquals(1, allProperties.getAllProperties().get("a").getDimensionsPropertyInfo().size());
 
-        Assert.assertEquals(1, propertiesInfo.get("a")
+        Assert.assertEquals(1, allProperties.getAllProperties().get("a")
                         .getDimensionsPropertyInfo()
                         .stream()
                         .filter(it -> ((List) it.getValue()).size() == 3)
@@ -131,7 +132,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
             allDimensions.addDimension("tier").addValue("sit");
         }
 
-        Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
+        AllProperties allProperties = SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/type-safety",
                         "test-type-safety-list-of-numbers"
@@ -139,10 +140,10 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                 allDimensions
         );
 
-        Assert.assertEquals(1, propertiesInfo.size());
-        Assert.assertEquals(1, propertiesInfo.get("a").getDimensionsPropertyInfo().size());
+        Assert.assertEquals(1, allProperties.getAllProperties().size());
+        Assert.assertEquals(1, allProperties.getAllProperties().get("a").getDimensionsPropertyInfo().size());
 
-        Assert.assertEquals(1, propertiesInfo.get("a")
+        Assert.assertEquals(1, allProperties.getAllProperties().get("a")
                         .getDimensionsPropertyInfo()
                         .stream()
                         .filter(it -> ((List) it.getValue()).size() == 3)

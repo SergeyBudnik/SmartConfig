@@ -9,23 +9,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-public class PropertyInfo {
+public class Property {
     private PropertyType type;
-    private DimensionPropertyInfo defaultPropertyInfo;
-    private Collection<DimensionPropertyInfo> dimensionsPropertyInfo;
+    private DimensionProperty defaultPropertyInfo;
+    private Collection<DimensionProperty> dimensionsPropertyInfo = new ArrayList<>();
+
+    public void addDimensionProperty(DimensionProperty dimensionProperty) {
+        dimensionsPropertyInfo.add(dimensionProperty);
+    }
 
     // ToDo: Test
-    public DimensionPropertyInfo getMostSuitableProperty(
+    public DimensionProperty getMostSuitableProperty(
             List<Tuple<String, String>> dimensionsValues
     ) {
-        List<Tuple<Integer, DimensionPropertyInfo>> weightedDimensionsPropertyInfo =
+        List<Tuple<Integer, DimensionProperty>> weightedDimensionsPropertyInfo =
                 new ArrayList<>();
 
-        for (DimensionPropertyInfo dimensionPropertyInfo : dimensionsPropertyInfo) {
+        for (DimensionProperty dimensionProperty : dimensionsPropertyInfo) {
             weightedDimensionsPropertyInfo.add(
                     new Tuple<>(
-                            calculatePropertyWeight(dimensionPropertyInfo, dimensionsValues),
-                            dimensionPropertyInfo
+                            calculatePropertyWeight(dimensionProperty, dimensionsValues),
+                            dimensionProperty
                     )
             );
         }
@@ -36,7 +40,7 @@ public class PropertyInfo {
                 .max()
                 .orElseThrow(RuntimeException::new);
 
-        List<DimensionPropertyInfo> dimensionPropertiesWithMaxWeight = weightedDimensionsPropertyInfo
+        List<DimensionProperty> dimensionPropertiesWithMaxWeight = weightedDimensionsPropertyInfo
                 .stream()
                 .filter(it -> it.getA() == maxWeight)
                 .map(Tuple::getB)
@@ -57,12 +61,12 @@ public class PropertyInfo {
     }
 
     private int calculatePropertyWeight(
-            DimensionPropertyInfo dimensionPropertyInfo,
+            DimensionProperty dimensionProperty,
             List<Tuple<String, String>> dimensionsValues
     ) {
         int weight = 0;
 
-        for (String dimension : dimensionPropertyInfo.getDimensions()) {
+        for (String dimension : dimensionProperty.getDimensions()) {
             boolean dimensionSuitable = dimensionsValues
                     .stream()
                     .map(Tuple::getB)
@@ -76,7 +80,7 @@ public class PropertyInfo {
         for (Tuple<String, String> dimensionValueInfo : dimensionsValues) {
             String dimensionValue = dimensionValueInfo.getB();
 
-            if (dimensionPropertyInfo.getDimensions().contains(dimensionValue)) {
+            if (dimensionProperty.getDimensions().contains(dimensionValue)) {
                 weight++;
             }
         }

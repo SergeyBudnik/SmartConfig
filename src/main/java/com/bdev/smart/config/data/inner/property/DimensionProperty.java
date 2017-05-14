@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
-public class DimensionPropertyInfo {
+public class DimensionProperty {
     private Set<String> dimensions;
     private Object value;
     private PropertyType type;
