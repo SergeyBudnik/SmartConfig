@@ -1,4 +1,4 @@
-package com.bdev.smart.config.data.inner;
+package com.bdev.smart.config.data.inner.property;
 
 public enum PropertyType {
     BOOLEAN,

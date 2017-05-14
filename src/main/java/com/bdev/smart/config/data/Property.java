@@ -1,7 +1,7 @@
 package com.bdev.smart.config.data;
 
 
-import com.bdev.smart.config.data.inner.PropertyType;
+import com.bdev.smart.config.data.inner.property.PropertyType;
 
 public class Property<T> {
     private T value;

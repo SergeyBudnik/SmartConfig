@@ -1,7 +1,7 @@
 package com.bdev.smart.config.generator.properties;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
-import com.bdev.smart.config.data.inner.DimensionInfo;
+import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
 import com.bdev.smart.config.data.util.Tuple;
 
 import java.util.List;

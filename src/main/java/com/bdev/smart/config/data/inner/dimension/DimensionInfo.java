@@ -1,4 +1,4 @@
-package com.bdev.smart.config.data.inner;
+package com.bdev.smart.config.data.inner.dimension;
 
 import lombok.Data;
 

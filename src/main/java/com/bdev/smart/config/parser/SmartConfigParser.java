@@ -1,8 +1,8 @@
 package com.bdev.smart.config.parser;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
-import com.bdev.smart.config.data.inner.DimensionInfo;
-import com.bdev.smart.config.data.inner.PropertyInfo;
+import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
+import com.bdev.smart.config.data.inner.property.PropertyInfo;
 
 import java.util.Map;
 

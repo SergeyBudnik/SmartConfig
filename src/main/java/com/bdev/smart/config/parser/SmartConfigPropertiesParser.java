@@ -1,9 +1,9 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.DimensionInfo;
-import com.bdev.smart.config.data.inner.DimensionPropertyInfo;
-import com.bdev.smart.config.data.inner.PropertyInfo;
-import com.bdev.smart.config.data.inner.PropertyType;
+import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
+import com.bdev.smart.config.data.inner.property.DimensionPropertyInfo;
+import com.bdev.smart.config.data.inner.property.PropertyInfo;
+import com.bdev.smart.config.data.inner.property.PropertyType;
 import com.bdev.smart.config.exceptions.DimensionDoesNotExistException;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;

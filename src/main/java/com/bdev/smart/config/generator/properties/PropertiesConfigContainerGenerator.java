@@ -1,6 +1,9 @@
 package com.bdev.smart.config.generator.properties;
 
 import com.bdev.smart.config.data.inner.*;
+import com.bdev.smart.config.data.inner.property.DimensionPropertyInfo;
+import com.bdev.smart.config.data.inner.property.PropertyInfo;
+import com.bdev.smart.config.data.inner.property.PropertyType;
 import com.bdev.smart.config.data.util.Tuple;
 import com.bdev.smart.config.generator.utils.SmartConfigImports;
 import com.bdev.smart.config.generator.utils.SmartConfigNamesMatcher;

@@ -1,14 +1,11 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.DimensionInfo;
+import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
 import com.bdev.smart.config.reader.SmartConfigReader;
-import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigList;
 import com.typesafe.config.ConfigValueType;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

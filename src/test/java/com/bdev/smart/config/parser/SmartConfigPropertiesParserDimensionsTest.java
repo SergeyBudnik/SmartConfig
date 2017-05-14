@@ -1,8 +1,8 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.DimensionInfo;
-import com.bdev.smart.config.data.inner.PropertyInfo;
-import com.bdev.smart.config.data.inner.PropertyType;
+import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
+import com.bdev.smart.config.data.inner.property.PropertyInfo;
+import com.bdev.smart.config.data.inner.property.PropertyType;
 import org.junit.Assert;
 import org.junit.Test;
 

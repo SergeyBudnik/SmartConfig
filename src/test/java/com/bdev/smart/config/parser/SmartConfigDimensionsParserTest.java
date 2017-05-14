@@ -1,6 +1,6 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.DimensionInfo;
+import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
 import org.junit.Ignore;
 import org.junit.Test;
 

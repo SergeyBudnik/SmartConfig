@@ -1,11 +1,8 @@
 package com.bdev.smart.config.generator;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
-import com.bdev.smart.config.data.inner.DimensionInfo;
+import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
 import net.sourceforge.jenesis4java.*;
-
-import java.util.Map;
-import java.util.Set;
 
 class SmartConfigDimensionsGenerator {
     static void generate(

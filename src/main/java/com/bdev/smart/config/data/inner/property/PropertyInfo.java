@@ -1,11 +1,10 @@
-package com.bdev.smart.config.data.inner;
+package com.bdev.smart.config.data.inner.property;
 
 import com.bdev.smart.config.data.util.Tuple;
 import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 

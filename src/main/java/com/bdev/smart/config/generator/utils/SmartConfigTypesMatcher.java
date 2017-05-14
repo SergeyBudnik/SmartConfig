@@ -1,6 +1,6 @@
 package com.bdev.smart.config.generator.utils;
 
-import com.bdev.smart.config.data.inner.PropertyType;
+import com.bdev.smart.config.data.inner.property.PropertyType;
 
 public class SmartConfigTypesMatcher {
     public static String getType(PropertyType propertyType) {

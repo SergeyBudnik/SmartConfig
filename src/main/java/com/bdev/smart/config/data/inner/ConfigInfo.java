@@ -1,5 +1,7 @@
 package com.bdev.smart.config.data.inner;
 
+import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
+import com.bdev.smart.config.data.inner.property.PropertyInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

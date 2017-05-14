@@ -1,7 +1,7 @@
 package com.bdev.smart.config.generator.properties;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
-import com.bdev.smart.config.data.inner.PropertyInfo;
+import com.bdev.smart.config.data.inner.property.PropertyInfo;
 import com.bdev.smart.config.generator.utils.SmartConfigImports;
 import com.bdev.smart.config.generator.utils.SmartConfigNamesMatcher;
 import com.bdev.smart.config.generator.utils.SmartConfigNamespace;
