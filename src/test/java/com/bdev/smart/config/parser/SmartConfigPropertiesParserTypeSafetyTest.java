@@ -1,6 +1,7 @@
 package com.bdev.smart.config.parser;
 
 import com.bdev.smart.config.data.inner.dimension.AllDimensions;
+import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.data.inner.property.AllProperties;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import org.junit.Assert;
@@ -165,6 +166,24 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                 getConfigPath(
                         "properties-parser/type-safety",
                         "test-type-safety-list-of-mixed"
+                ),
+                allDimensions
+        );
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testTypeSafetyMultipleValuesListOfMixed() {
+        AllDimensions allDimensions = new AllDimensions(); {
+            Dimension dimension = allDimensions.addDimension("tier"); {
+                dimension.addValue("sit");
+                dimension.addValue("uat");
+            }
+        }
+
+        SmartConfigPropertiesParser.parse(
+                getConfigPath(
+                        "properties-parser/type-safety",
+                        "test-type-safety-multiple-values-list-of-mixed"
                 ),
                 allDimensions
         );

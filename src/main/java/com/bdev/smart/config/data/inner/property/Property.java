@@ -15,6 +15,14 @@ public class Property {
     private Collection<DimensionProperty> dimensionsPropertyInfo = new ArrayList<>();
 
     public void addDimensionProperty(DimensionProperty dimensionProperty) {
+        if (type == null) {
+            type = dimensionProperty.getType();
+        } else {
+            if (type != dimensionProperty.getType()) {
+                throw new RuntimeException();
+            }
+        }
+
         dimensionsPropertyInfo.add(dimensionProperty);
     }
 

@@ -4,15 +4,15 @@ import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.data.inner.property.AllProperties;
 import com.bdev.smart.config.data.inner.property.DimensionProperty;
-import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
 
 import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 class SmartConfigPropertiesParser {
     static AllProperties parse(
@@ -21,30 +21,10 @@ class SmartConfigPropertiesParser {
     ) {
         Config config = ConfigFactory.parseFile(new File(propertiesPath));
 
-        AllProperties res = getUntypedProperties(config, allDimensions);
-
-        setPropertiesType(res);
-
-        return res;
+        return getAllProperties(config, allDimensions);
     }
 
-    private static void setPropertiesType(AllProperties properties) {
-        for (String propertyName : properties.getAllProperties().keySet()) {
-            Property property = properties.getAllProperties().get(propertyName);
-
-            PropertyType type = null;
-
-            for (DimensionProperty dimensionProperty : property.getDimensionsPropertyInfo()) {
-                if (type == null) {
-                    type = dimensionProperty.getType();
-                }
-            }
-
-            property.setType(type);
-        }
-    }
-
-    private static AllProperties getUntypedProperties(Config config, AllDimensions allDimensions) {
+    private static AllProperties getAllProperties(Config config, AllDimensions allDimensions) {
         AllProperties allProperties = new AllProperties();
 
         config
@@ -56,22 +36,12 @@ class SmartConfigPropertiesParser {
 
                     List<String> dimensionsValues = extractDimensions(propertyKeyParts);
 
-                    DimensionProperty dimensionProperty = new DimensionProperty(); {
-                        Object value = config.getAnyRef(configProperty.getKey());
-                        PropertyType propertyType = getType(configProperty.getValue(), value);
-
-                        dimensionProperty.setValue(value);
-                        dimensionProperty.setType(propertyType);
-
-                        for (String dimensionValue : dimensionsValues) {
-                            Dimension dimension = allDimensions.findDimensionByValue(dimensionValue);
-
-                            dimensionProperty.addDimension(
-                                    dimension.getName(),
-                                    dimensionValue
-                            );
-                        }
-                    }
+                    DimensionProperty dimensionProperty = getDimensionProperty(
+                            config,
+                            allDimensions,
+                            configProperty,
+                            dimensionsValues
+                    );
 
                     allProperties
                             .findOrCreateProperty(propertyName)
@@ -79,6 +49,32 @@ class SmartConfigPropertiesParser {
                 });
 
         return allProperties;
+    }
+
+    private static DimensionProperty getDimensionProperty(
+            Config config,
+            AllDimensions allDimensions,
+            Map.Entry<String, ConfigValue> configProperty,
+            List<String> dimensionsValues
+    ) {
+        DimensionProperty dimensionProperty = new DimensionProperty(); {
+            Object value = config.getAnyRef(configProperty.getKey());
+            PropertyType propertyType = getType(configProperty.getValue(), value);
+
+            dimensionProperty.setValue(value);
+            dimensionProperty.setType(propertyType);
+
+            for (String dimensionValue : dimensionsValues) {
+                Dimension dimension = allDimensions.findDimensionByValue(dimensionValue);
+
+                dimensionProperty.addDimension(
+                        dimension.getName(),
+                        dimensionValue
+                );
+            }
+        }
+
+        return dimensionProperty;
     }
 
     private static PropertyType getType(ConfigValue configValue, Object value) {
