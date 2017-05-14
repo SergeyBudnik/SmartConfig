@@ -66,11 +66,13 @@ public class Property {
     ) {
         int weight = 0;
 
-        for (String dimension : dimensionProperty.getDimensions()) {
+        for (String dimensionName : dimensionProperty.getDimensions().keySet()) {
+            String dimensionValue = dimensionProperty.getDimensions().get(dimensionName);
+
             boolean dimensionSuitable = dimensionsValues
                     .stream()
                     .map(Tuple::getB)
-                    .anyMatch(it -> it.equals(dimension));
+                    .anyMatch(it -> it.equals(dimensionValue));
 
             if (!dimensionSuitable) {
                 return -1;
@@ -80,7 +82,7 @@ public class Property {
         for (Tuple<String, String> dimensionValueInfo : dimensionsValues) {
             String dimensionValue = dimensionValueInfo.getB();
 
-            if (dimensionProperty.getDimensions().contains(dimensionValue)) {
+            if (dimensionProperty.getDimensions().containsValue(dimensionValue)) {
                 weight++;
             }
         }

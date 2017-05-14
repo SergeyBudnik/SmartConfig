@@ -2,13 +2,11 @@ package com.bdev.smart.config.parser;
 
 import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import com.bdev.smart.config.data.inner.property.AllProperties;
-import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Map;
 
 public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParserTest {
     @Test
@@ -34,7 +32,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         .filter(it -> it.getValue().equals(3))
                         .filter(it -> it.getType().equals(PropertyType.NUMBER))
                         .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().contains("sit"))
+                        .filter(it -> it.getDimensions().containsValue("sit"))
                         .count()
         );
     }
@@ -62,7 +60,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         .filter(it -> it.getValue().equals("hello"))
                         .filter(it -> it.getType().equals(PropertyType.STRING))
                         .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().contains("sit"))
+                        .filter(it -> it.getDimensions().containsValue("sit"))
                         .count()
         );
     }
@@ -90,7 +88,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         .filter(it -> it.getValue().equals(false))
                         .filter(it -> it.getType().equals(PropertyType.BOOLEAN))
                         .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().contains("sit"))
+                        .filter(it -> it.getDimensions().containsValue("sit"))
                         .count()
         );
     }
@@ -121,7 +119,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         .filter(it -> ((List) it.getValue()).contains("hello_3"))
                         .filter(it -> it.getType().equals(PropertyType.LIST_OF_STRINGS))
                         .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().contains("sit"))
+                        .filter(it -> it.getDimensions().containsValue("sit"))
                         .count()
         );
     }
@@ -152,7 +150,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         .filter(it -> ((List) it.getValue()).contains(3))
                         .filter(it -> it.getType().equals(PropertyType.LIST_OF_NUMBERS))
                         .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().contains("sit"))
+                        .filter(it -> it.getDimensions().containsValue("sit"))
                         .count()
         );
     }

@@ -13,7 +13,7 @@ public class AllDimensions {
             throw new RuntimeException();
         }
 
-        Dimension dimension = new Dimension(this);
+        Dimension dimension = new Dimension(this, dimensionName);
 
         dimensions.put(dimensionName, dimension);
 

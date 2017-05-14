@@ -1,6 +1,7 @@
 package com.bdev.smart.config.parser;
 
 import com.bdev.smart.config.data.inner.dimension.AllDimensions;
+import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.data.inner.property.AllProperties;
 import com.bdev.smart.config.data.inner.property.DimensionProperty;
 import com.bdev.smart.config.data.inner.property.Property;
@@ -11,29 +12,23 @@ import com.typesafe.config.ConfigValue;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 class SmartConfigPropertiesParser {
     static AllProperties parse(
             String propertiesPath,
             AllDimensions allDimensions
     ) {
-        AllProperties res =
-                getCollapsedProperties(getRawProperties(propertiesPath));
+        Config config = ConfigFactory.parseFile(new File(propertiesPath));
 
-        res.getAllProperties().forEach((propertyName, propertyInfo) -> propertyInfo
-                .getDimensionsPropertyInfo()
-                .stream()
-                .map(DimensionProperty::getDimensions)
-                .forEach(dimensionsNames ->
-                        dimensionsNames.forEach(dimensionName -> {
-                            allDimensions.findDimensionByValue(dimensionName);
-                        })
-                ));
+        AllProperties res = getUntypedProperties(config, allDimensions);
+
+        setPropertiesType(res);
 
         return res;
     }
 
-    private static AllProperties getCollapsedProperties(AllProperties properties) {
+    private static void setPropertiesType(AllProperties properties) {
         for (String propertyName : properties.getAllProperties().keySet()) {
             Property property = properties.getAllProperties().get(propertyName);
 
@@ -47,13 +42,9 @@ class SmartConfigPropertiesParser {
 
             property.setType(type);
         }
-
-        return properties;
     }
 
-    private static AllProperties getRawProperties(String propertiesPath) {
-        Config config = ConfigFactory.parseFile(new File(propertiesPath));
-
+    private static AllProperties getUntypedProperties(Config config, AllDimensions allDimensions) {
         AllProperties allProperties = new AllProperties();
 
         config
@@ -62,15 +53,24 @@ class SmartConfigPropertiesParser {
                     String [] propertyKeyParts = splitKey(configProperty.getKey());
 
                     String propertyName = extractPropertyName(propertyKeyParts);
-                    List<String> dimensions = extractDimensions(propertyKeyParts);
+
+                    List<String> dimensionsValues = extractDimensions(propertyKeyParts);
 
                     DimensionProperty dimensionProperty = new DimensionProperty(); {
                         Object value = config.getAnyRef(configProperty.getKey());
                         PropertyType propertyType = getType(configProperty.getValue(), value);
 
-                        dimensionProperty.setDimensions(new HashSet<>(dimensions));
                         dimensionProperty.setValue(value);
                         dimensionProperty.setType(propertyType);
+
+                        for (String dimensionValue : dimensionsValues) {
+                            Dimension dimension = allDimensions.findDimensionByValue(dimensionValue);
+
+                            dimensionProperty.addDimension(
+                                    dimension.getName(),
+                                    dimensionValue
+                            );
+                        }
                     }
 
                     allProperties

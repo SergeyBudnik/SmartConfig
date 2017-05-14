@@ -31,7 +31,7 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
                         .filter(it -> it.getValue().equals(1))
                         .filter(it -> it.getType().equals(PropertyType.NUMBER))
                         .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().contains("sit"))
+                        .filter(it -> it.getDimensions().containsValue("sit"))
                         .count()
         );
     }
@@ -60,8 +60,8 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
                 .filter(it -> it.getValue().equals(1))
                 .filter(it -> it.getType().equals(PropertyType.NUMBER))
                 .filter(it -> it.getDimensions().size() == 2)
-                .filter(it -> it.getDimensions().contains("sit"))
-                .filter(it -> it.getDimensions().contains("uk"))
+                .filter(it -> it.getDimensions().containsValue("sit"))
+                .filter(it -> it.getDimensions().containsValue("uk"))
                 .count()
         );
     }
@@ -93,7 +93,7 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
                         .filter(it -> it.getValue().equals(1))
                         .filter(it -> it.getType().equals(PropertyType.NUMBER))
                         .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().contains("sit"))
+                        .filter(it -> it.getDimensions().containsValue("sit"))
                         .count()
         );
 
@@ -103,7 +103,7 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
                         .filter(it -> it.getValue().equals(2))
                         .filter(it -> it.getType().equals(PropertyType.NUMBER))
                         .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().contains("uat"))
+                        .filter(it -> it.getDimensions().containsValue("uat"))
                         .count()
         );
 
@@ -113,7 +113,7 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
                         .filter(it -> it.getValue().equals(3))
                         .filter(it -> it.getType().equals(PropertyType.NUMBER))
                         .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().contains("prod"))
+                        .filter(it -> it.getDimensions().containsValue("prod"))
                         .count()
         );
     }
