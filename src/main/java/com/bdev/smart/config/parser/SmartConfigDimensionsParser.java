@@ -1,55 +1,29 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
+import com.bdev.smart.config.data.inner.dimension.AllDimensions;
+import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.reader.SmartConfigReader;
 import com.typesafe.config.ConfigList;
 import com.typesafe.config.ConfigValueType;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 class SmartConfigDimensionsParser {
-    static Map<String, DimensionInfo> parse(String filePath) {
-        Map<String, DimensionInfo> res = new HashMap<>();
+    static AllDimensions parse(String filePath) {
+        AllDimensions allDimensions = new AllDimensions();
 
         SmartConfigReader
                 .read(filePath)
-                .forEach(dimension -> {
-                    if (res.containsKey(dimension.getKey())) {
+                .forEach(configDimension -> {
+                    if (configDimension.getValue().valueType() != ConfigValueType.LIST) {
                         throw new RuntimeException();
                     }
 
-                    res.put(dimension.getKey(), new DimensionInfo());
+                    Dimension dimension = allDimensions.addDimension(configDimension.getKey());
 
-                    if (dimension.getValue().valueType() != ConfigValueType.LIST) {
-                        throw new RuntimeException();
-                    }
-
-                    Set<String> allDimensions = res.get(dimension.getKey()).getDimensions();
-
-                    for (Object rawValue : ((ConfigList) dimension.getValue()).unwrapped()) {
-                        String value = (String) rawValue;
-
-                        if (allDimensions.contains(value)) {
-                            throw new RuntimeException();
-                        }
-
-                        allDimensions.add(value);
+                    for (Object dimensionValue : ((ConfigList) configDimension.getValue()).unwrapped()) {
+                        dimension.addValue((String) dimensionValue);
                     }
                 });
 
-        long totalAmount = res.size();
-
-        long distinctAmount = res.values()
-                .stream()
-                .distinct()
-                .count();
-
-        if (totalAmount != distinctAmount) {
-            throw new RuntimeException();
-        }
-
-        return res;
+        return allDimensions;
     }
 }

@@ -1,7 +1,7 @@
 package com.bdev.smart.config.generator.properties;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
-import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
+import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.data.util.Tuple;
 
 import java.util.List;
@@ -21,9 +21,9 @@ class PropertiesConfigGeneratorUtils {
         } else {
             String dimensionName = dimensionNames.get(dimensionIndex);
 
-            DimensionInfo dimensionInfo = configInfo.getDimensions().get(dimensionName);
+            Dimension dimension = configInfo.getDimensions().getDimensions().get(dimensionName);
 
-            for (String dimensionValue : dimensionInfo.getDimensions()) {
+            for (String dimensionValue : dimension.getValues()) {
                 dimensionValues.push(new Tuple<>(dimensionName, dimensionValue));
 
                 gatherDimensionsMultiplication(

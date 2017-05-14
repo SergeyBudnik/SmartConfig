@@ -1,10 +1,8 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
+import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -12,31 +10,31 @@ import static org.junit.Assert.assertTrue;
 public class SmartConfigDimensionsParserTest extends SmartConfigParserTest {
     @Test
     public void testSingleDimensionSingleValue() {
-        Map<String, DimensionInfo> dimensionsInfo = SmartConfigDimensionsParser.parse(
+        AllDimensions allDimensions = SmartConfigDimensionsParser.parse(
                 getConfigPath(
                         "dimensions-parser",
                         "test-dimension-single-value-single"
                 )
         );
 
-        assertEquals(1, dimensionsInfo.size());
-        assertEquals(1, dimensionsInfo.get("tier").getDimensions().size());
-        assertTrue(dimensionsInfo.get("tier").getDimensions().contains("sit"));
+        assertEquals(1, allDimensions.getDimensions().size());
+        assertEquals(1, allDimensions.getDimensions().get("tier").getValues().size());
+        assertTrue(allDimensions.getDimensions().get("tier").getValues().contains("sit"));
     }
 
     @Test
     public void testSingleDimensionMultipleValues() {
-        Map<String, DimensionInfo> dimensionsInfo = SmartConfigDimensionsParser.parse(
+        AllDimensions dimensionsInfo = SmartConfigDimensionsParser.parse(
                 getConfigPath(
                         "dimensions-parser",
                         "test-dimension-single-values-multiple"
                 )
         );
 
-        assertEquals(1, dimensionsInfo.size());
-        assertEquals(2, dimensionsInfo.get("tier").getDimensions().size());
-        assertTrue(dimensionsInfo.get("tier").getDimensions().contains("sit"));
-        assertTrue(dimensionsInfo.get("tier").getDimensions().contains("uat"));
+        assertEquals(1, dimensionsInfo.getDimensions().size());
+        assertEquals(2, dimensionsInfo.getDimensions().get("tier").getValues().size());
+        assertTrue(dimensionsInfo.getDimensions().get("tier").getValues().contains("sit"));
+        assertTrue(dimensionsInfo.getDimensions().get("tier").getValues().contains("uat"));
     }
 
     @Test(expected = RuntimeException.class)
@@ -51,20 +49,20 @@ public class SmartConfigDimensionsParserTest extends SmartConfigParserTest {
 
     @Test
     public void testMultipleDimensionsSingleValue() {
-        Map<String, DimensionInfo> dimensionsInfo = SmartConfigDimensionsParser.parse(
+        AllDimensions dimensionsInfo = SmartConfigDimensionsParser.parse(
                 getConfigPath(
                         "dimensions-parser",
                         "test-dimensions-multiple-value-single"
                 )
         );
 
-        assertEquals(2, dimensionsInfo.size());
+        assertEquals(2, dimensionsInfo.getDimensions().size());
 
-        assertEquals(1, dimensionsInfo.get("tier").getDimensions().size());
-        assertTrue(dimensionsInfo.get("tier").getDimensions().contains("sit"));
+        assertEquals(1, dimensionsInfo.getDimensions().get("tier").getValues().size());
+        assertTrue(dimensionsInfo.getDimensions().get("tier").getValues().contains("sit"));
 
-        assertEquals(1, dimensionsInfo.get("zone").getDimensions().size());
-        assertTrue(dimensionsInfo.get("zone").getDimensions().contains("uk"));
+        assertEquals(1, dimensionsInfo.getDimensions().get("zone").getValues().size());
+        assertTrue(dimensionsInfo.getDimensions().get("zone").getValues().contains("uk"));
     }
 
     /**

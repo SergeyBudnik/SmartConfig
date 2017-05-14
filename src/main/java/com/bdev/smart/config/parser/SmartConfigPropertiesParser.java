@@ -1,22 +1,20 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
+import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import com.bdev.smart.config.data.inner.property.DimensionPropertyInfo;
 import com.bdev.smart.config.data.inner.property.PropertyInfo;
 import com.bdev.smart.config.data.inner.property.PropertyType;
-import com.bdev.smart.config.exceptions.DimensionDoesNotExistException;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 class SmartConfigPropertiesParser {
     static Map<String, PropertyInfo> parse(
             String propertiesPath,
-            Map<String, DimensionInfo> allDimensions
+            AllDimensions allDimensions
     ) {
         Map<String, PropertyInfo> res =
                 getCollapsedProperties(getRawProperties(propertiesPath));
@@ -27,28 +25,7 @@ class SmartConfigPropertiesParser {
                 .map(DimensionPropertyInfo::getDimensions)
                 .forEach(dimensionsNames ->
                         dimensionsNames.forEach(dimensionName -> {
-                            AtomicBoolean dimensionNameFound = new AtomicBoolean(false);
-
-                            allDimensions.forEach((allDimensionsElementName, allDimensionsElementValue) -> {
-                                    long matchAmount = allDimensionsElementValue
-                                            .getDimensions()
-                                            .stream()
-                                            .filter(it -> it.equals(dimensionName))
-                                            .count();
-
-                                    if (matchAmount == 1) {
-                                        dimensionNameFound.set(true);
-                                    } else if (matchAmount > 1) {
-                                        throw new RuntimeException();
-                                    }
-                            });
-
-                            if (!dimensionNameFound.get()) {
-                                throw new DimensionDoesNotExistException(
-                                        propertyName,
-                                        dimensionName
-                                );
-                            }
+                            allDimensions.findDimensionByValue(dimensionName);
                         })
                 ));
 

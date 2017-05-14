@@ -1,22 +1,19 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
+import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import com.bdev.smart.config.data.inner.property.PropertyInfo;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParserTest {
     @Test
     public void testSimpleInteger() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
-            }
+        AllDimensions allDimensions = new AllDimensions(); {
+            allDimensions.addDimension("tier").addValue("sit");
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
@@ -24,7 +21,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-integer"
                 ),
-                dimensions
+                allDimensions
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
@@ -43,10 +40,8 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
 
     @Test
     public void testSimpleString() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
-            }
+        AllDimensions allDimensions = new AllDimensions(); {
+            allDimensions.addDimension("tier").addValue("sit");
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
@@ -54,7 +49,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-string"
                 ),
-                dimensions
+                allDimensions
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
@@ -73,10 +68,8 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
 
     @Test
     public void testSimpleBoolean() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
-            }
+        AllDimensions allDimensions = new AllDimensions(); {
+            allDimensions.addDimension("tier").addValue("sit");
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
@@ -84,7 +77,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-boolean"
                 ),
-                dimensions
+                allDimensions
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
@@ -103,10 +96,8 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
 
     @Test
     public void testSimpleListOfStrings() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
-            }
+        AllDimensions allDimensions = new AllDimensions(); {
+            allDimensions.addDimension("tier").addValue("sit");
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
@@ -114,7 +105,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-list-of-strings"
                 ),
-                dimensions
+                allDimensions
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
@@ -136,10 +127,8 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
 
     @Test
     public void testSimpleListOfNumbers() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
-            }
+        AllDimensions allDimensions = new AllDimensions(); {
+            allDimensions.addDimension("tier").addValue("sit");
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
@@ -147,7 +136,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-list-of-numbers"
                 ),
-                dimensions
+                allDimensions
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
@@ -169,10 +158,8 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
 
     @Test(expected = RuntimeException.class)
     public void testSimpleListOfMixed() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
-            }
+        AllDimensions allDimensions = new AllDimensions(); {
+            allDimensions.addDimension("tier").addValue("sit");
         }
 
         SmartConfigPropertiesParser.parse(
@@ -180,7 +167,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-list-of-mixed"
                 ),
-                dimensions
+                allDimensions
         );
     }
 }

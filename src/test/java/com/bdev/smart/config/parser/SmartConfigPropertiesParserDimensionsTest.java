@@ -1,21 +1,19 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
+import com.bdev.smart.config.data.inner.dimension.AllDimensions;
+import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.data.inner.property.PropertyInfo;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParserTest {
     @Test
     public void testPropertyWithSingleValueWithSingleDimension() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
-            }
+        AllDimensions allDimensions = new AllDimensions(); {
+            allDimensions.addDimension("tier").addValue("sit");
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
@@ -23,7 +21,7 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
                         "properties-parser/dimension",
                         "test-property-with-single-value-with-single-dimension"
                 ),
-                dimensions
+                allDimensions
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
@@ -42,14 +40,9 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
 
     @Test
     public void testPropertyWithSingleValueWithMultipleDimensions() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
-            }
-
-            dimensions.put("zone", new DimensionInfo()); {
-                dimensions.get("zone").getDimensions().add("uk");
-            }
+        AllDimensions allDimensions = new AllDimensions(); {
+            allDimensions.addDimension("tier").addValue("sit");
+            allDimensions.addDimension("zone").addValue("uk");
         }
 
         Map<String, PropertyInfo> propertiesInfo = SmartConfigPropertiesParser.parse(
@@ -57,7 +50,7 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
                         "properties-parser/dimension",
                         "test-property-with-single-value-with-multiple-dimensions"
                 ),
-                dimensions
+                allDimensions
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
@@ -77,11 +70,11 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
 
     @Test
     public void testPropertyWithMultipleValues() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
-                dimensions.get("tier").getDimensions().add("uat");
-                dimensions.get("tier").getDimensions().add("prod");
+        AllDimensions allDimensions = new AllDimensions(); {
+            Dimension tierDimension = allDimensions.addDimension("tier"); {
+                tierDimension.addValue("sit");
+                tierDimension.addValue("uat");
+                tierDimension.addValue("prod");
             }
         }
 
@@ -90,7 +83,7 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
                         "properties-parser/dimension",
                         "test-property-with-multiple-values"
                 ),
-                dimensions
+                allDimensions
         );
 
         Assert.assertEquals(1, propertiesInfo.size());
@@ -129,9 +122,9 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
 
     @Test(expected = RuntimeException.class)
     public void testPropertyWithUnrecognizedDimension() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
+        AllDimensions allDimensions = new AllDimensions(); {
+            Dimension dimension = allDimensions.addDimension("tier"); {
+                dimension.addValue("sit");
             }
         }
 
@@ -140,16 +133,16 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
                         "properties-parser/dimension",
                         "test-property-with-unrecognized-dimension"
                 ),
-                dimensions
+                allDimensions
         );
     }
 
     @Test(expected = RuntimeException.class)
     public void testPropertyWithSingleValueWithMultipleDimensionsWithConflict() {
-        Map<String, DimensionInfo> dimensions = new HashMap<>(); {
-            dimensions.put("tier", new DimensionInfo()); {
-                dimensions.get("tier").getDimensions().add("sit");
-                dimensions.get("tier").getDimensions().add("uat");
+        AllDimensions allDimensions = new AllDimensions(); {
+            Dimension tierDimension = allDimensions.addDimension("tier"); {
+                tierDimension.addValue("sit");
+                tierDimension.addValue("uat");
             }
         }
 
@@ -158,7 +151,7 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
                         "properties-parser/dimension",
                         "test-property-with-single-value-with-multiple-dimensions-with-conflict"
                 ),
-                dimensions
+                allDimensions
         );
     }
 }

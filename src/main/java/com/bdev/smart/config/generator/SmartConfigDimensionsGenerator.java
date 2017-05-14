@@ -1,7 +1,7 @@
 package com.bdev.smart.config.generator;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
-import com.bdev.smart.config.data.inner.dimension.DimensionInfo;
+import com.bdev.smart.config.data.inner.dimension.Dimension;
 import net.sourceforge.jenesis4java.*;
 
 class SmartConfigDimensionsGenerator {
@@ -16,15 +16,15 @@ class SmartConfigDimensionsGenerator {
 
         PackageClass smartConfigDimensionClass = unit.newPublicClass("SmartConfigDimension");
 
-        for (String dimensionName : configInfo.getDimensions().keySet()) {
+        for (String dimensionName : configInfo.getDimensions().getDimensions().keySet()) {
             Interface dimensionInterface = smartConfigDimensionClass
                     .newInnerInterface(dimensionName.toUpperCase());
 
             dimensionInterface.setAccess(Access.AccessType.PUBLIC);
 
-            DimensionInfo dimensionInfo = configInfo.getDimensions().get(dimensionName);
+            Dimension dimension = configInfo.getDimensions().getDimensions().get(dimensionName);
 
-            for (String dimensionValue : dimensionInfo.getDimensions()) {
+            for (String dimensionValue : dimension.getValues()) {
                 Constant dimensionConstant = dimensionInterface
                         .newConstant(vm.newType("String"), dimensionValue.toUpperCase());
 

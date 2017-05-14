@@ -49,7 +49,7 @@ public class PropertiesConfigContainerGenerator {
             PackageClass smartConfigPropertiesClass,
             ConfigInfo configInfo
     ) {
-        List<String> dimensionNames = new ArrayList<>(configInfo.getDimensions().keySet());
+        List<String> dimensionNames = new ArrayList<>(configInfo.getDimensions().getDimensions().keySet());
 
         Consumer<Stack<Tuple<String, String>>> generator = dimensionValues -> {
             String dimensionPropertiesName = SmartConfigNamesMatcher
