@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SmartConfigPropertiesParserTest_TypeSafety extends SmartConfigParserTest {
+public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParserTest {
     @Test
     public void testSimpleInteger() {
         Map<String, DimensionInfo> dimensions = new HashMap<>(); {

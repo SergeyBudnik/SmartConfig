@@ -9,7 +9,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SmartConfigPropertiesParserTest_Dimensions extends SmartConfigParserTest {
+public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParserTest {
     @Test
     public void testPropertyWithSingleValueWithSingleDimension() {
         Map<String, DimensionInfo> dimensions = new HashMap<>(); {
