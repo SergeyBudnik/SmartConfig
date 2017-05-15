@@ -9,8 +9,8 @@ import java.util.Map;
 public class DimensionProperty extends ConditionalProperty {
     @Getter @Setter private Map<String, String> dimensions = new HashMap<>();
 
-    public DimensionProperty(Object value, PropertyType type) {
-        super(value, type);
+    public DimensionProperty(String name, Object value, PropertyType type) {
+        super(name, value, type);
     }
 
     public void addDimension(String name, String value) {

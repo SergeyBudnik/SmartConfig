@@ -1,8 +1,7 @@
 package com.bdev.smart.config.generator.properties;
 
-import com.bdev.smart.config.data.inner.*;
+import com.bdev.smart.config.data.inner.ConfigInfo;
 import com.bdev.smart.config.data.inner.property.ConditionalProperty;
-import com.bdev.smart.config.data.inner.property.DimensionProperty;
 import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import com.bdev.smart.config.data.util.Tuple;
@@ -28,6 +27,7 @@ public class PropertiesConfigContainerGenerator {
         unit.setNamespace(SmartConfigNamespace.VALUE);
 
         unit.addImport(SmartConfigImports.LIST_IMPORT);
+        unit.addImport(SmartConfigImports.COLLECTIONS_IMPORT);
         unit.addImport(SmartConfigImports.ARRAYS_IMPORT);
 
         unit.addImport(SmartConfigImports.SMART_CONFIG_IMPORT);
@@ -118,6 +118,8 @@ public class PropertiesConfigContainerGenerator {
     ) {
         return vm.newVar(
                 "new SmartConfigValue(" +
+                    "\"" + conditionalProperty.getName() + "\"" +
+                    ", " +
                     getUnboxedPropertyValue(conditionalProperty) +
                 ")"
         );
@@ -128,6 +130,7 @@ public class PropertiesConfigContainerGenerator {
     ) {
         switch (conditionalProperty.getType()) {
             case NUMBER:
+                return "" + conditionalProperty.getValue() + "L";
             case BOOLEAN:
                 return "" + conditionalProperty.getValue();
             case STRING:
@@ -137,13 +140,16 @@ public class PropertiesConfigContainerGenerator {
             case LIST_OF_BOOLEANS: {
                 StringBuilder sb = new StringBuilder();
 
-                sb.append("Arrays.asList(");
+                sb.append("Collections.unmodifiableList(");
 
                 for (Object o : (List) conditionalProperty.getValue()) {
                     if (conditionalProperty.getType() == PropertyType.LIST_OF_STRINGS) {
                         sb.append("\"");
                         sb.append(o);
                         sb.append("\"");
+                    } else if (conditionalProperty.getType() == PropertyType.LIST_OF_NUMBERS) {
+                        sb.append(o);
+                        sb.append("L");
                     } else {
                         sb.append(o);
                     }

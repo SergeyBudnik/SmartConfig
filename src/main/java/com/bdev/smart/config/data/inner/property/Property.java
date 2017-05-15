@@ -10,9 +10,14 @@ import java.util.stream.Collectors;
 
 @Data
 public class Property {
+    private String name;
     private PropertyType type;
     private DefaultProperty defaultProperty;
     private Collection<DimensionProperty> dimensionsProperty = new ArrayList<>();
+
+    Property(String name) {
+        this.name = name;
+    }
 
     public void setDefaultProperty(DefaultProperty defaultProperty) {
         if (this.defaultProperty != null) {

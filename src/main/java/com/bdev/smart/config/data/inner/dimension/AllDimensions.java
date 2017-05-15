@@ -20,12 +20,6 @@ public class AllDimensions {
         return dimension;
     }
 
-    public Dimension findDimensionByName(String dimensionName) {
-        return Optional
-                .ofNullable(dimensions.get(dimensionName))
-                .orElseThrow(RuntimeException::new);
-    }
-
     public Dimension findDimensionByValue(String dimensionValue) {
         for (Dimension dimension : dimensions.values()) {
             if (dimension.containsValue(dimensionValue)) {

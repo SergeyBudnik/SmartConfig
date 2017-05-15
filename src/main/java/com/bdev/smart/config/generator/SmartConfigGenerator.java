@@ -1,6 +1,7 @@
 package com.bdev.smart.config.generator;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
+import com.bdev.smart.config.generator.dimensions.SmartConfigDimensionsGenerator;
 import com.bdev.smart.config.generator.properties.PropertiesConfigContainerGenerator;
 import com.bdev.smart.config.generator.properties.PropertiesConfigGenerator;
 import net.sourceforge.jenesis4java.VirtualMachine;

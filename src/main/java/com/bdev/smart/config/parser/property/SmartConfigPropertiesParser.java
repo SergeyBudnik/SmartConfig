@@ -44,12 +44,17 @@ public class SmartConfigPropertiesParser {
                             throw new RuntimeException();
                         }
 
-                        DefaultProperty defaultProperty = new DefaultProperty(propertyValue, propertyType);
+                        DefaultProperty defaultProperty = new DefaultProperty(
+                                propertyName,
+                                propertyValue,
+                                propertyType
+                        );
 
                         property.setDefaultProperty(defaultProperty);
                     } else {
                         DimensionProperty dimensionProperty = getDimensionProperty(
                                 allDimensions,
+                                propertyName,
                                 propertyValue,
                                 propertyType,
                                 dimensionsValues
@@ -66,11 +71,16 @@ public class SmartConfigPropertiesParser {
 
     private static DimensionProperty getDimensionProperty(
             AllDimensions allDimensions,
+            String propertyName,
             Object propertyValue,
             PropertyType propertyType,
             List<String> dimensionsValues
     ) {
-        DimensionProperty dimensionProperty = new DimensionProperty(propertyValue, propertyType); {
+        DimensionProperty dimensionProperty = new DimensionProperty(
+                propertyName,
+                propertyValue,
+                propertyType
+        ); {
             for (String dimensionValue : dimensionsValues) {
                 Dimension dimension = allDimensions.findDimensionByValue(dimensionValue);
 

@@ -1,11 +1,11 @@
-package com.bdev.smart.config.generator;
+package com.bdev.smart.config.generator.dimensions;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
 import com.bdev.smart.config.data.inner.dimension.Dimension;
 import net.sourceforge.jenesis4java.*;
 
-class SmartConfigDimensionsGenerator {
-    static void generate(
+public class SmartConfigDimensionsGenerator {
+    public static void generate(
             VirtualMachine vm,
             String rootPath,
             ConfigInfo configInfo

@@ -1,7 +1,7 @@
 package com.bdev.smart.config.data.inner.property;
 
 public class DefaultProperty extends ConditionalProperty {
-    public DefaultProperty(Object value, PropertyType type) {
-        super(value, type);
+    public DefaultProperty(String name, Object value, PropertyType type) {
+        super(name, value, type);
     }
 }

@@ -11,7 +11,7 @@ public class AllProperties {
 
     public Property findOrCreateProperty(String name) {
         if (!allProperties.containsKey(name)) {
-            allProperties.put(name, new Property());
+            allProperties.put(name, new Property(name));
         }
 
         return allProperties.get(name);
