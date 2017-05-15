@@ -8,6 +8,6 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class ConfigInfo {
-    private AllDimensions dimensions;
-    private AllProperties propertiesInfo;
+    private AllDimensions allDimensions;
+    private AllProperties allProperties;
 }

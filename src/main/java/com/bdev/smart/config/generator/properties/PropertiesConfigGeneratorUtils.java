@@ -21,7 +21,7 @@ class PropertiesConfigGeneratorUtils {
         } else {
             String dimensionName = dimensionNames.get(dimensionIndex);
 
-            Dimension dimension = configInfo.getDimensions().getDimensions().get(dimensionName);
+            Dimension dimension = configInfo.getAllDimensions().getDimensions().get(dimensionName);
 
             for (String dimensionValue : dimension.getValues()) {
                 dimensionValues.push(new Tuple<>(dimensionName, dimensionValue));

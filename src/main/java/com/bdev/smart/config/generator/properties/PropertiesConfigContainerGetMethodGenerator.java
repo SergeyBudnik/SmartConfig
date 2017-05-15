@@ -23,13 +23,13 @@ class PropertiesConfigContainerGetMethodGenerator {
             getConfigMethod.isStatic(true);
         }
 
-        for (String dimensionName : configInfo.getDimensions().getDimensions().keySet()) {
+        for (String dimensionName : configInfo.getAllDimensions().getDimensions().keySet()) {
             getConfigMethod.addParameter(vm.newType("String"), dimensionName);
         }
 
         PropertiesConfigGeneratorUtils.gatherDimensionsMultiplication(
                 configInfo,
-                new ArrayList<>(configInfo.getDimensions().getDimensions().keySet()),
+                new ArrayList<>(configInfo.getAllDimensions().getDimensions().keySet()),
                 0,
                 new Stack<>(),
                 dimensionValues -> {

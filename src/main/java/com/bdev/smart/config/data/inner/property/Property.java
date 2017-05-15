@@ -11,8 +11,16 @@ import java.util.stream.Collectors;
 @Data
 public class Property {
     private PropertyType type;
-    private DimensionProperty defaultPropertyInfo;
-    private Collection<DimensionProperty> dimensionsPropertyInfo = new ArrayList<>();
+    private DefaultProperty defaultProperty;
+    private Collection<DimensionProperty> dimensionsProperty = new ArrayList<>();
+
+    public void setDefaultProperty(DefaultProperty defaultProperty) {
+        if (this.defaultProperty != null) {
+            throw new RuntimeException();
+        }
+
+        this.defaultProperty = defaultProperty;
+    }
 
     public void addDimensionProperty(DimensionProperty dimensionProperty) {
         if (type == null) {
@@ -23,7 +31,7 @@ public class Property {
             }
         }
 
-        dimensionsPropertyInfo.add(dimensionProperty);
+        dimensionsProperty.add(dimensionProperty);
     }
 
     // ToDo: Test
@@ -33,7 +41,7 @@ public class Property {
         List<Tuple<Integer, DimensionProperty>> weightedDimensionsPropertyInfo =
                 new ArrayList<>();
 
-        for (DimensionProperty dimensionProperty : dimensionsPropertyInfo) {
+        for (DimensionProperty dimensionProperty : dimensionsProperty) {
             weightedDimensionsPropertyInfo.add(
                     new Tuple<>(
                             calculatePropertyWeight(dimensionProperty, dimensionsValues),

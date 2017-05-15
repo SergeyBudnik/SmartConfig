@@ -16,13 +16,13 @@ class SmartConfigDimensionsGenerator {
 
         PackageClass smartConfigDimensionClass = unit.newPublicClass("SmartConfigDimension");
 
-        for (String dimensionName : configInfo.getDimensions().getDimensions().keySet()) {
+        for (String dimensionName : configInfo.getAllDimensions().getDimensions().keySet()) {
             Interface dimensionInterface = smartConfigDimensionClass
                     .newInnerInterface(dimensionName.toUpperCase());
 
             dimensionInterface.setAccess(Access.AccessType.PUBLIC);
 
-            Dimension dimension = configInfo.getDimensions().getDimensions().get(dimensionName);
+            Dimension dimension = configInfo.getAllDimensions().getDimensions().get(dimensionName);
 
             for (String dimensionValue : dimension.getValues()) {
                 Constant dimensionConstant = dimensionInterface

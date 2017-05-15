@@ -52,7 +52,7 @@ public class SmartConfigDimensionsParserTest extends SmartConfigParserTest {
         AllDimensions dimensionsInfo = SmartConfigDimensionsParser.parse(
                 getConfigPath(
                         "dimensions-parser",
-                        "test-dimensions-multiple-value-single"
+                        "test-allDimensions-multiple-value-single"
                 )
         );
 
@@ -74,7 +74,7 @@ public class SmartConfigDimensionsParserTest extends SmartConfigParserTest {
         SmartConfigDimensionsParser.parse(
                 getConfigPath(
                         "dimensions-parser",
-                        "test-dimensions-multiple-value-single-names-conflict"
+                        "test-allDimensions-multiple-value-single-names-conflict"
                 )
         );
     }
@@ -84,7 +84,7 @@ public class SmartConfigDimensionsParserTest extends SmartConfigParserTest {
         SmartConfigDimensionsParser.parse(
                 getConfigPath(
                         "dimensions-parser",
-                        "test-dimensions-multiple-value-single-values-conflict"
+                        "test-allDimensions-multiple-value-single-values-conflict"
                 )
         );
     }

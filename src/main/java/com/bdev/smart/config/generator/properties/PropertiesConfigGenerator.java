@@ -28,8 +28,8 @@ public class PropertiesConfigGenerator {
 
         smartConfigPropertiesInterface.setAccess(Access.PUBLIC);
 
-        for (String propertyName : configInfo.getPropertiesInfo().getAllProperties().keySet()) {
-            Property property = configInfo.getPropertiesInfo().getAllProperties().get(propertyName);
+        for (String propertyName : configInfo.getAllProperties().getAllProperties().keySet()) {
+            Property property = configInfo.getAllProperties().getAllProperties().get(propertyName);
 
             smartConfigPropertiesInterface.newMethod(
                     vm.newType(SmartConfigTypesMatcher.getType(property.getType())),

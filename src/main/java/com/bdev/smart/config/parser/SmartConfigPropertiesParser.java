@@ -2,9 +2,7 @@ package com.bdev.smart.config.parser;
 
 import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import com.bdev.smart.config.data.inner.dimension.Dimension;
-import com.bdev.smart.config.data.inner.property.AllProperties;
-import com.bdev.smart.config.data.inner.property.DimensionProperty;
-import com.bdev.smart.config.data.inner.property.PropertyType;
+import com.bdev.smart.config.data.inner.property.*;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
@@ -12,9 +10,10 @@ import com.typesafe.config.ConfigValue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 class SmartConfigPropertiesParser {
+    private static final String DEFAULT_PROPERTY_KEYWORD = "default";
+
     static AllProperties parse(
             String propertiesPath,
             AllDimensions allDimensions
@@ -36,34 +35,43 @@ class SmartConfigPropertiesParser {
 
                     List<String> dimensionsValues = extractDimensions(propertyKeyParts);
 
-                    DimensionProperty dimensionProperty = getDimensionProperty(
-                            config,
-                            allDimensions,
-                            configProperty,
-                            dimensionsValues
-                    );
+                    Property property = allProperties.findOrCreateProperty(propertyName);
 
-                    allProperties
-                            .findOrCreateProperty(propertyName)
-                            .addDimensionProperty(dimensionProperty);
+                    Object propertyValue = config.getAnyRef(configProperty.getKey());
+                    PropertyType propertyType = getType(configProperty.getValue(), propertyValue);
+
+                    if (dimensionsValues.contains(DEFAULT_PROPERTY_KEYWORD)) {
+                        if (dimensionsValues.size() != 1) {
+                            throw new RuntimeException();
+                        }
+
+                        DefaultProperty defaultProperty = new DefaultProperty(propertyValue, propertyType);
+
+                        property.setDefaultProperty(defaultProperty);
+                    } else {
+                        DimensionProperty dimensionProperty = getDimensionProperty(
+                                allDimensions,
+                                propertyValue,
+                                propertyType,
+                                dimensionsValues
+                        );
+
+                        allProperties
+                                .findOrCreateProperty(propertyName)
+                                .addDimensionProperty(dimensionProperty);
+                    }
                 });
 
         return allProperties;
     }
 
     private static DimensionProperty getDimensionProperty(
-            Config config,
             AllDimensions allDimensions,
-            Map.Entry<String, ConfigValue> configProperty,
+            Object propertyValue,
+            PropertyType propertyType,
             List<String> dimensionsValues
     ) {
-        DimensionProperty dimensionProperty = new DimensionProperty(); {
-            Object value = config.getAnyRef(configProperty.getKey());
-            PropertyType propertyType = getType(configProperty.getValue(), value);
-
-            dimensionProperty.setValue(value);
-            dimensionProperty.setType(propertyType);
-
+        DimensionProperty dimensionProperty = new DimensionProperty(propertyValue, propertyType); {
             for (String dimensionValue : dimensionsValues) {
                 Dimension dimension = allDimensions.findDimensionByValue(dimensionValue);
 
