@@ -1,6 +1,7 @@
 package com.bdev.smart.config.generator.properties;
 
 import com.bdev.smart.config.data.inner.*;
+import com.bdev.smart.config.data.inner.property.ConditionalProperty;
 import com.bdev.smart.config.data.inner.property.DimensionProperty;
 import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.data.inner.property.PropertyType;
@@ -66,7 +67,7 @@ public class PropertiesConfigContainerGenerator {
             for (String propertyName : configInfo.getAllProperties().getAllProperties().keySet()) {
                 Property property = configInfo.getAllProperties().getAllProperties().get(propertyName);
 
-                DimensionProperty dimensionProperty = property
+                ConditionalProperty conditionalProperty = property
                         .getMostSuitableProperty(dimensionValues);
 
                 ClassField f = dimensionPropertyClass.newField(
@@ -75,7 +76,7 @@ public class PropertiesConfigContainerGenerator {
                 );
 
                 f.setAccess(Access.PRIVATE);
-                f.setExpression(getPropertyValue(vm, dimensionProperty));
+                f.setExpression(getPropertyValue(vm, conditionalProperty));
 
                 ClassMethod getPropertyMethod = dimensionPropertyClass.newMethod(
                         vm.newType(SmartConfigTypesMatcher.getType(property.getType())),
@@ -113,24 +114,24 @@ public class PropertiesConfigContainerGenerator {
 
     private static Expression getPropertyValue(
             VirtualMachine vm,
-            DimensionProperty dimensionProperty
+            ConditionalProperty conditionalProperty
     ) {
         return vm.newVar(
                 "new SmartConfigValue(" +
-                    getUnboxedPropertyValue(dimensionProperty) +
+                    getUnboxedPropertyValue(conditionalProperty) +
                 ")"
         );
     }
 
     private static String getUnboxedPropertyValue(
-            DimensionProperty dimensionProperty
+            ConditionalProperty conditionalProperty
     ) {
-        switch (dimensionProperty.getType()) {
+        switch (conditionalProperty.getType()) {
             case NUMBER:
             case BOOLEAN:
-                return "" + dimensionProperty.getValue();
+                return "" + conditionalProperty.getValue();
             case STRING:
-                return "\"" + dimensionProperty.getValue() + "\"";
+                return "\"" + conditionalProperty.getValue() + "\"";
             case LIST_OF_STRINGS:
             case LIST_OF_NUMBERS:
             case LIST_OF_BOOLEANS: {
@@ -138,8 +139,8 @@ public class PropertiesConfigContainerGenerator {
 
                 sb.append("Arrays.asList(");
 
-                for (Object o : (List) dimensionProperty.getValue()) {
-                    if (dimensionProperty.getType() == PropertyType.LIST_OF_STRINGS) {
+                for (Object o : (List) conditionalProperty.getValue()) {
+                    if (conditionalProperty.getType() == PropertyType.LIST_OF_STRINGS) {
                         sb.append("\"");
                         sb.append(o);
                         sb.append("\"");
@@ -154,8 +155,6 @@ public class PropertiesConfigContainerGenerator {
                 sb.deleteCharAt(sb.length() - 1);
 
                 sb.append(")");
-
-                System.out.println(sb.toString());
 
                 return sb.toString();
             }

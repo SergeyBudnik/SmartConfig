@@ -43,44 +43,52 @@ public class Property {
     }
 
     // ToDo: Test
-    public DimensionProperty getMostSuitableProperty(
+    public ConditionalProperty getMostSuitableProperty(
             List<Tuple<String, String>> dimensionsValues
     ) {
         List<Tuple<Integer, DimensionProperty>> weightedDimensionsPropertyInfo =
                 new ArrayList<>();
 
-        for (DimensionProperty dimensionProperty : dimensionsProperty) {
-            weightedDimensionsPropertyInfo.add(
-                    new Tuple<>(
-                            calculatePropertyWeight(dimensionProperty, dimensionsValues),
-                            dimensionProperty
-                    )
-            );
-        }
+        if (dimensionsProperty.size() == 0) {
+            if (defaultProperty == null) {
+                throw new RuntimeException();
+            }
 
-        int maxWeight = weightedDimensionsPropertyInfo
-                .stream()
-                .mapToInt(Tuple::getA)
-                .max()
-                .orElseThrow(RuntimeException::new);
-
-        List<DimensionProperty> dimensionPropertiesWithMaxWeight = weightedDimensionsPropertyInfo
-                .stream()
-                .filter(it -> it.getA() == maxWeight)
-                .map(Tuple::getB)
-                .collect(Collectors.toList());
-
-        if (dimensionPropertiesWithMaxWeight.size() <= 0) {
-            dimensionsValues
-                    .stream()
-                    .map(Tuple::getB)
-                    .forEach(System.out::println);
-
-            throw new RuntimeException("No suitable");
-        } else if (dimensionPropertiesWithMaxWeight.size() > 1) {
-            throw new RuntimeException("More than one");
+            return defaultProperty;
         } else {
-            return dimensionPropertiesWithMaxWeight.get(0);
+            for (DimensionProperty dimensionProperty : dimensionsProperty) {
+                weightedDimensionsPropertyInfo.add(
+                        new Tuple<>(
+                                calculatePropertyWeight(dimensionProperty, dimensionsValues),
+                                dimensionProperty
+                        )
+                );
+            }
+
+            int maxWeight = weightedDimensionsPropertyInfo
+                    .stream()
+                    .mapToInt(Tuple::getA)
+                    .max()
+                    .orElseThrow(RuntimeException::new);
+
+            List<DimensionProperty> dimensionPropertiesWithMaxWeight = weightedDimensionsPropertyInfo
+                    .stream()
+                    .filter(it -> it.getA() > 0)
+                    .filter(it -> it.getA() == maxWeight)
+                    .map(Tuple::getB)
+                    .collect(Collectors.toList());
+
+            if (dimensionPropertiesWithMaxWeight.size() <= 0) {
+                if (defaultProperty != null) {
+                    return defaultProperty;
+                }
+
+                throw new RuntimeException("No suitable");
+            } else if (dimensionPropertiesWithMaxWeight.size() > 1) {
+                throw new RuntimeException("More than one");
+            } else {
+                return dimensionPropertiesWithMaxWeight.get(0);
+            }
         }
     }
 

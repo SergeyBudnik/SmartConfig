@@ -1,19 +1,16 @@
 package com.bdev.smart.config.data.inner.property;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Data
-public class DimensionProperty {
-    private Map<String, String> dimensions = new HashMap<>();
-    private Object value;
-    private PropertyType type;
+public class DimensionProperty extends ConditionalProperty {
+    @Getter @Setter private Map<String, String> dimensions = new HashMap<>();
 
     public DimensionProperty(Object value, PropertyType type) {
-        this.value = value;
-        this.type = type;
+        super(value, type);
     }
 
     public void addDimension(String name, String value) {

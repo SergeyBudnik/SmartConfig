@@ -22,7 +22,7 @@ public class SmartConfigMojo extends AbstractMojo {
     protected File outputJavaDirectory;
     @Parameter(property = "smart.config.properties", required = true)
     protected String smartConfigProperties;
-    @Parameter(property = "smart.config.values", required = true)
+    @Parameter(property = "smart.config.dimensions", required = true)
     protected String smartConfigDimensions;
 
     @Override
