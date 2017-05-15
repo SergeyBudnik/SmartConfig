@@ -1,6 +1,7 @@
 package com.bdev.smart.config.parser;
 
 import com.bdev.smart.config.data.inner.dimension.AllDimensions;
+import com.bdev.smart.config.parser.dimension.SmartConfigDimensionsParser;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -52,7 +53,7 @@ public class SmartConfigDimensionsParserTest extends SmartConfigParserTest {
         AllDimensions dimensionsInfo = SmartConfigDimensionsParser.parse(
                 getConfigPath(
                         "dimensions-parser",
-                        "test-allDimensions-multiple-value-single"
+                        "test-dimensions-multiple-value-single"
                 )
         );
 
@@ -74,7 +75,7 @@ public class SmartConfigDimensionsParserTest extends SmartConfigParserTest {
         SmartConfigDimensionsParser.parse(
                 getConfigPath(
                         "dimensions-parser",
-                        "test-allDimensions-multiple-value-single-names-conflict"
+                        "test-dimensions-multiple-value-single-names-conflict"
                 )
         );
     }
@@ -84,7 +85,7 @@ public class SmartConfigDimensionsParserTest extends SmartConfigParserTest {
         SmartConfigDimensionsParser.parse(
                 getConfigPath(
                         "dimensions-parser",
-                        "test-allDimensions-multiple-value-single-values-conflict"
+                        "test-dimensions-multiple-value-single-values-conflict"
                 )
         );
     }

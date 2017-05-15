@@ -3,6 +3,7 @@ package com.bdev.smart.config.parser;
 import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import com.bdev.smart.config.data.inner.property.AllProperties;
 import com.bdev.smart.config.data.inner.property.PropertyType;
+import com.bdev.smart.config.parser.property.SmartConfigPropertiesParser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -4,6 +4,7 @@ import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.data.inner.property.AllProperties;
 import com.bdev.smart.config.data.inner.property.PropertyType;
+import com.bdev.smart.config.parser.property.SmartConfigPropertiesParser;
 import org.junit.Assert;
 import org.junit.Test;
 

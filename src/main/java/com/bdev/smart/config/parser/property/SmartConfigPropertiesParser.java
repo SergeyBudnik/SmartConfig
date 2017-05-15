@@ -1,4 +1,4 @@
-package com.bdev.smart.config.parser;
+package com.bdev.smart.config.parser.property;
 
 import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import com.bdev.smart.config.data.inner.dimension.Dimension;
@@ -8,13 +8,15 @@ import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
-class SmartConfigPropertiesParser {
+import static com.bdev.smart.config.parser.property.SmartConfigPropertyResolver.getDimensions;
+import static com.bdev.smart.config.parser.property.SmartConfigPropertyResolver.getName;
+
+public class SmartConfigPropertiesParser {
     private static final String DEFAULT_PROPERTY_KEYWORD = "default";
 
-    static AllProperties parse(
+    public static AllProperties parse(
             String propertiesPath,
             AllDimensions allDimensions
     ) {
@@ -29,11 +31,8 @@ class SmartConfigPropertiesParser {
         config
                 .entrySet()
                 .forEach(configProperty -> {
-                    String [] propertyKeyParts = splitKey(configProperty.getKey());
-
-                    String propertyName = extractPropertyName(propertyKeyParts);
-
-                    List<String> dimensionsValues = extractDimensions(propertyKeyParts);
+                    String propertyName = getName(configProperty.getKey());
+                    List<String> dimensionsValues = getDimensions(configProperty.getKey());
 
                     Property property = allProperties.findOrCreateProperty(propertyName);
 
@@ -136,33 +135,5 @@ class SmartConfigPropertiesParser {
                 (o instanceof Long) ||
                 (o instanceof Float) ||
                 (o instanceof Double);
-    }
-
-    private static String [] splitKey(String key) {
-        return key.split("\\.");
-    }
-
-    private static String extractPropertyName(String [] propertyKeyParts) {
-        return propertyKeyParts[0];
-    }
-
-    private static List<String> extractDimensions(String [] propertyKeyParts) {
-        if (propertyKeyParts.length == 1) {
-            return new ArrayList<>();
-        }
-
-        List<String> dimensions = new ArrayList<>();
-
-        String [] rawDimensions = propertyKeyParts[1].replace("\"", "").split("~");
-
-        for (String rawDimension : rawDimensions) {
-            String trimmedRawDimension = rawDimension.trim();
-
-            if (!trimmedRawDimension.isEmpty()) {
-                dimensions.add(trimmedRawDimension);
-            }
-        }
-
-        return dimensions;
     }
 }

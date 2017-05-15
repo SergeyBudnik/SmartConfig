@@ -4,6 +4,7 @@ import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.data.inner.property.AllProperties;
 import com.bdev.smart.config.data.inner.property.PropertyType;
+import com.bdev.smart.config.parser.property.SmartConfigPropertiesParser;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
         AllProperties allProperties = SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/dimension",
-                        "test-property-with-single-value-with-multiple-allDimensions"
+                        "test-property-with-single-value-with-multiple-dimensions"
                 ),
                 allDimensions
         );
@@ -147,7 +148,7 @@ public class SmartConfigPropertiesParserDimensionsTest extends SmartConfigParser
         SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/dimension",
-                        "test-property-with-single-value-with-multiple-allDimensions-with-conflict"
+                        "test-property-with-single-value-with-multiple-dimensions-with-conflict"
                 ),
                 allDimensions
         );
