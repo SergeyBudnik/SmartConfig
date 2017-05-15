@@ -29,6 +29,7 @@ public class PropertiesConfigContainerGenerator {
         unit.addImport(SmartConfigImports.LIST_IMPORT);
         unit.addImport(SmartConfigImports.COLLECTIONS_IMPORT);
         unit.addImport(SmartConfigImports.ARRAYS_IMPORT);
+        unit.addImport(SmartConfigImports.OPTIONAL_IMPORT);
 
         unit.addImport(SmartConfigImports.SMART_CONFIG_IMPORT);
         unit.addImport(SmartConfigImports.SMART_CONFIG_VALUE_IMPORT);
@@ -88,6 +89,12 @@ public class PropertiesConfigContainerGenerator {
                 getPropertyMethod.newReturn().setExpression(vm.newVar(propertyName));
             }
 
+            PropertiesConfigContainerPropertyAllPropertiesFieldGenerator
+                    .generate(vm, dimensionPropertyClass, configInfo.getAllProperties());
+
+            PropertiesConfigContainerPropertyFindPropertyByNameMethodGenerator
+                    .generate(vm, dimensionPropertyClass);
+
             Field smartConfigPropertiesInstance = smartConfigPropertiesClass.newField(
                     vm.newType(dimensionPropertiesName),
                     SmartConfigNamesMatcher.getDimensionPropertiesInstanceName(dimensionValues)
@@ -140,7 +147,7 @@ public class PropertiesConfigContainerGenerator {
             case LIST_OF_BOOLEANS: {
                 StringBuilder sb = new StringBuilder();
 
-                sb.append("Collections.unmodifiableList(");
+                sb.append("Collections.unmodifiableList(Arrays.asList(");
 
                 for (Object o : (List) conditionalProperty.getValue()) {
                     if (conditionalProperty.getType() == PropertyType.LIST_OF_STRINGS) {
@@ -160,7 +167,7 @@ public class PropertiesConfigContainerGenerator {
                 sb.deleteCharAt(sb.length() - 1);
                 sb.deleteCharAt(sb.length() - 1);
 
-                sb.append(")");
+                sb.append("))");
 
                 return sb.toString();
             }

@@ -6,10 +6,7 @@ import com.bdev.smart.config.generator.utils.SmartConfigImports;
 import com.bdev.smart.config.generator.utils.SmartConfigNamesMatcher;
 import com.bdev.smart.config.generator.utils.SmartConfigNamespace;
 import com.bdev.smart.config.generator.utils.SmartConfigTypesMatcher;
-import net.sourceforge.jenesis4java.Access;
-import net.sourceforge.jenesis4java.CompilationUnit;
-import net.sourceforge.jenesis4java.Interface;
-import net.sourceforge.jenesis4java.VirtualMachine;
+import net.sourceforge.jenesis4java.*;
 
 public class PropertiesConfigGenerator {
     public static void generate(
@@ -23,6 +20,7 @@ public class PropertiesConfigGenerator {
 
         unit.addImport(SmartConfigImports.LIST_IMPORT);
         unit.addImport(SmartConfigImports.SMART_CONFIG_VALUE_IMPORT);
+        unit.addImport(SmartConfigImports.OPTIONAL_IMPORT);
 
         Interface smartConfigPropertiesInterface = unit.newInterface("SmartConfig");
 
@@ -37,6 +35,21 @@ public class PropertiesConfigGenerator {
             );
         }
 
+        generateFindPropertyByNameMethod(vm, smartConfigPropertiesInterface);
+
         unit.encode();
+    }
+
+    private static void generateFindPropertyByNameMethod(
+            VirtualMachine vm,
+            Interface smartConfigPropertiesInterface
+    ) {
+        AbstractMethod findPropertyByNameMethod = smartConfigPropertiesInterface
+                .newMethod(
+                        vm.newType("<T> Optional<SmartConfigValue<T>>"),
+                        "findPropertyByName"
+                );
+
+        findPropertyByNameMethod.addParameter(vm.newType("String"), "propertyName");
     }
 }
