@@ -40,8 +40,8 @@ class SmartConfigPropertiesParser {
                     Object propertyValue = config.getAnyRef(configProperty.getKey());
                     PropertyType propertyType = getType(configProperty.getValue(), propertyValue);
 
-                    if (dimensionsValues.contains(DEFAULT_PROPERTY_KEYWORD)) {
-                        if (dimensionsValues.size() != 1) {
+                    if (dimensionsValues.size() == 0 || dimensionsValues.contains(DEFAULT_PROPERTY_KEYWORD)) {
+                        if (dimensionsValues.size() > 1) {
                             throw new RuntimeException();
                         }
 
@@ -147,6 +147,10 @@ class SmartConfigPropertiesParser {
     }
 
     private static List<String> extractDimensions(String [] propertyKeyParts) {
+        if (propertyKeyParts.length == 1) {
+            return new ArrayList<>();
+        }
+
         List<String> dimensions = new ArrayList<>();
 
         String [] rawDimensions = propertyKeyParts[1].replace("\"", "").split("~");

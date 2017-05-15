@@ -19,6 +19,14 @@ public class Property {
             throw new RuntimeException();
         }
 
+        if (type == null) {
+            type = defaultProperty.getType();
+        } else {
+            if (type != defaultProperty.getType()) {
+                throw new RuntimeException();
+            }
+        }
+
         this.defaultProperty = defaultProperty;
     }
 
