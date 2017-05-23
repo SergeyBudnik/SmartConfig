@@ -20,7 +20,7 @@ public class SmartConfigPropertiesParser {
             String propertiesPath,
             AllDimensions allDimensions
     ) {
-        Config config = ConfigFactory.parseFile(new File(propertiesPath));
+        Config config = ConfigFactory.parseFile(new File(propertiesPath)).resolve();
 
         return getAllProperties(config, allDimensions);
     }

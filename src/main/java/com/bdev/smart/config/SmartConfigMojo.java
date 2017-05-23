@@ -53,9 +53,7 @@ public class SmartConfigMojo extends AbstractMojo {
                             configInfo
                     );
         } catch (Exception e) {
-            e.printStackTrace();
-
-            System.out.println("fuck you");
+            throw new RuntimeException(e);
         }
     }
 }
