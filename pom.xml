@@ -7,8 +7,34 @@
 
     <groupId>com.github.sergeybudnik</groupId>
     <artifactId>smart.config</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>maven-plugin</packaging>
+
+    <name>SmartConfig</name>
+    <description>True type-safe configuration</description>
+    <url>https://github.com/SergeyBudnik/SmartConfig</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Sergey Budnik</name>
+            <email>serbudnik@gmail.com</email>
+            <organization>None</organization>
+            <organizationUrl>None</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/SergeyBudnik/SmartConfig.git</connection>
+        <developerConnection>scm:git:ssh://github.com/SergeyBudnik/SmartConfig.git</developerConnection>
+        <url>http://github.com/SergeyBudnik/SmartConfig/tree/master</url>
+    </scm>
 
     <distributionManagement>
         <snapshotRepository>
