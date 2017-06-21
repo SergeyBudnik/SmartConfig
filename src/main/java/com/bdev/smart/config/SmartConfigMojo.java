@@ -35,14 +35,10 @@ public class SmartConfigMojo extends AbstractMojo {
             throw new RuntimeException("Unable to create new source directory");
         }
 
-        try {
-            generateJavaCode();
-        } catch (IOException e) {
-            throw new MojoExecutionException("Could not generate Java source code!", e);
-        }
+        generateJavaCode();
     }
 
-    private void generateJavaCode() throws IOException {
+    private void generateJavaCode() throws MojoExecutionException {
         try {
             ConfigInfo configInfo =
                     SmartConfigParser.parse(smartConfigDimensions, smartConfigProperties);
@@ -53,7 +49,7 @@ public class SmartConfigMojo extends AbstractMojo {
                             configInfo
                     );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MojoExecutionException(e.getMessage());
         }
     }
 }

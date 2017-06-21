@@ -1,6 +1,7 @@
 package com.bdev.smart.config.data.inner.property;
 
 import com.bdev.smart.config.data.util.Tuple;
+import com.bdev.smart.config.exceptions.PropertyIsInvalid;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -21,14 +22,14 @@ public class Property {
 
     public void setDefaultProperty(DefaultProperty defaultProperty) {
         if (this.defaultProperty != null) {
-            throw new RuntimeException();
+            throw new PropertyIsInvalid(name);
         }
 
         if (type == null) {
             type = defaultProperty.getType();
         } else {
             if (type != defaultProperty.getType()) {
-                throw new RuntimeException();
+                throw new PropertyIsInvalid(name);
             }
         }
 
@@ -40,7 +41,7 @@ public class Property {
             type = dimensionProperty.getType();
         } else {
             if (type != dimensionProperty.getType()) {
-                throw new RuntimeException();
+                throw new PropertyIsInvalid(name);
             }
         }
 
@@ -56,7 +57,7 @@ public class Property {
 
         if (dimensionsProperty.size() == 0) {
             if (defaultProperty == null) {
-                throw new RuntimeException();
+                throw new PropertyIsInvalid(name);
             }
 
             return defaultProperty;
@@ -88,9 +89,9 @@ public class Property {
                     return defaultProperty;
                 }
 
-                throw new RuntimeException("No suitable");
+                throw new PropertyIsInvalid(name);
             } else if (dimensionPropertiesWithMaxWeight.size() > 1) {
-                throw new RuntimeException("More than one");
+                throw new PropertyIsInvalid(name);
             } else {
                 return dimensionPropertiesWithMaxWeight.get(0);
             }

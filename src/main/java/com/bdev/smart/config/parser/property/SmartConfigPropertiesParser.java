@@ -3,6 +3,7 @@ package com.bdev.smart.config.parser.property;
 import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.data.inner.property.*;
+import com.bdev.smart.config.exceptions.PropertyIsInvalid;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
@@ -37,11 +38,11 @@ public class SmartConfigPropertiesParser {
                     Property property = allProperties.findOrCreateProperty(propertyName);
 
                     Object propertyValue = config.getAnyRef(configProperty.getKey());
-                    PropertyType propertyType = getType(configProperty.getValue(), propertyValue);
+                    PropertyType propertyType = getType(propertyName, configProperty.getValue(), propertyValue);
 
                     if (dimensionsValues.size() == 0 || dimensionsValues.contains(DEFAULT_PROPERTY_KEYWORD)) {
                         if (dimensionsValues.size() > 1) {
-                            throw new RuntimeException();
+                            throw new PropertyIsInvalid(propertyName);
                         }
 
                         DefaultProperty defaultProperty = new DefaultProperty(
@@ -94,7 +95,7 @@ public class SmartConfigPropertiesParser {
         return dimensionProperty;
     }
 
-    private static PropertyType getType(ConfigValue configValue, Object value) {
+    private static PropertyType getType(String propertyName, ConfigValue configValue, Object value) {
         switch (configValue.valueType()) {
             case BOOLEAN:
                 return PropertyType.BOOLEAN;
@@ -103,13 +104,13 @@ public class SmartConfigPropertiesParser {
             case STRING:
                 return PropertyType.STRING;
             case LIST:
-                return getListType((List) value);
+                return getListType(propertyName, (List) value);
         }
 
-        throw new RuntimeException();
+        throw new PropertyIsInvalid(propertyName);
     }
 
-    private static PropertyType getListType(List value) {
+    private static PropertyType getListType(String propertyName, List value) {
         PropertyType type = null;
 
         for (Object o : value) {
@@ -122,14 +123,14 @@ public class SmartConfigPropertiesParser {
             } else if (o instanceof String) {
                 currentType = PropertyType.LIST_OF_STRINGS;
             } else {
-                throw new RuntimeException();
+                throw new PropertyIsInvalid(propertyName);
             }
 
             if (type == null) {
                 type = currentType;
             } else {
                 if (type != currentType) {
-                    throw new RuntimeException();
+                    throw new PropertyIsInvalid(propertyName);
                 }
             }
         }
