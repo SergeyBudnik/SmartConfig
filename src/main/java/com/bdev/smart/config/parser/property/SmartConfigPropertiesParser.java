@@ -16,6 +16,10 @@ import static com.bdev.smart.config.parser.property.SmartConfigPropertyResolver.
 
 public class SmartConfigPropertiesParser {
     private static final String DEFAULT_PROPERTY_KEYWORD = "default";
+    private static final String MODIFIERS_PROPERTY_KEYWORD = "modifiers";
+
+    private static final String MODIFIER_UNSAFE_READ = "-r";
+    private static final String MODIFIER_UNSAFE_OVERRIDE = "-o";
 
     public static AllProperties parse(
             String csvPropertiesPath,
@@ -50,41 +54,80 @@ public class SmartConfigPropertiesParser {
                     List<String> dimensionsValues = getDimensions(configProperty.getKey());
 
                     Property property = allProperties.findOrCreateProperty(propertyName);
-
                     Object propertyValue = config.getAnyRef(configProperty.getKey());
-                    PropertyType propertyType = getType(propertyName, configProperty.getValue(), propertyValue);
 
-                    if (dimensionsValues.size() == 0 || dimensionsValues.contains(DEFAULT_PROPERTY_KEYWORD)) {
-                        if (dimensionsValues.size() > 1) {
-                            throw new PropertyIsInvalid(propertyName);
-                        }
-
-                        DefaultProperty defaultProperty = new DefaultProperty(
-                                propertyName,
-                                propertyValue,
-                                propertyType
-                        );
-
-                        property.setDefaultProperty(defaultProperty);
+                    if (dimensionsValues.contains(MODIFIERS_PROPERTY_KEYWORD)) {
+                        processModifiers(property, (String) propertyValue);
                     } else {
-                        DimensionProperty dimensionProperty = getDimensionProperty(
-                                allDimensions,
-                                propertyName,
-                                propertyValue,
-                                propertyType,
-                                dimensionsValues
-                        );
+                        PropertyType propertyType = getType(propertyName, configProperty.getValue(), propertyValue);
 
-                        allProperties
-                                .findOrCreateProperty(propertyName)
-                                .addDimensionProperty(dimensionProperty);
+                        if (dimensionsValues.size() == 0 || dimensionsValues.contains(DEFAULT_PROPERTY_KEYWORD)) {
+                            processDefaultProperty(dimensionsValues, property, propertyName, propertyValue, propertyType);
+                        } else {
+                            processProperty(property, allDimensions, allProperties, propertyName, propertyValue, propertyType, dimensionsValues);
+                        }
                     }
                 });
 
         return allProperties;
     }
 
+    private static void processDefaultProperty(
+            List<String> dimensionsValues,
+            Property property,
+            String propertyName,
+            Object propertyValue,
+            PropertyType propertyType
+    ) {
+        if (dimensionsValues.size() > 1) {
+            throw new PropertyIsInvalid(propertyName);
+        }
+
+        DefaultProperty defaultProperty = new DefaultProperty(
+                property,
+                propertyName,
+                propertyValue,
+                propertyType
+        );
+
+        property.setDefaultProperty(defaultProperty);
+    }
+
+    private static void processProperty(
+            Property property,
+            AllDimensions allDimensions,
+            AllProperties allProperties,
+            String propertyName,
+            Object propertyValue,
+            PropertyType propertyType,
+            List<String> dimensionsValues
+    ) {
+        DimensionProperty dimensionProperty = getDimensionProperty(
+                property,
+                allDimensions,
+                propertyName,
+                propertyValue,
+                propertyType,
+                dimensionsValues
+        );
+
+        allProperties
+                .findOrCreateProperty(propertyName)
+                .addDimensionProperty(dimensionProperty);
+    }
+
+    private static void processModifiers(Property property, String value) {
+        if (value.contains(MODIFIER_UNSAFE_READ)) {
+            property.setReadProtected(false);
+        }
+
+        if (value.contains(MODIFIER_UNSAFE_OVERRIDE)) {
+            property.setOverrideProtected(false);
+        }
+    }
+
     private static DimensionProperty getDimensionProperty(
+            Property property,
             AllDimensions allDimensions,
             String propertyName,
             Object propertyValue,
@@ -92,6 +135,7 @@ public class SmartConfigPropertiesParser {
             List<String> dimensionsValues
     ) {
         DimensionProperty dimensionProperty = new DimensionProperty(
+                property,
                 propertyName,
                 propertyValue,
                 propertyType

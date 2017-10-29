@@ -15,6 +15,8 @@ public class Property {
     private PropertyType type;
     private DefaultProperty defaultProperty;
     private Collection<DimensionProperty> dimensionsProperty = new ArrayList<>();
+    private boolean readProtected = true;
+    private boolean overrideProtected = true;
 
     Property(String name) {
         this.name = name;
