@@ -18,10 +18,24 @@ public class SmartConfigPropertiesParser {
     private static final String DEFAULT_PROPERTY_KEYWORD = "default";
 
     public static AllProperties parse(
-            String propertiesPath,
+            String csvPropertiesPath,
             AllDimensions allDimensions
     ) {
-        Config config = ConfigFactory.parseFile(new File(propertiesPath)).resolve();
+        String [] propertiesPaths = csvPropertiesPath.split(",");
+
+        Config config = null;
+
+        if (propertiesPaths.length == 0) {
+            throw new RuntimeException("At least one property file must exist");
+        }
+
+        for (String propertiesPath : propertiesPaths) {
+            Config unresolvedConfig = ConfigFactory.parseFile(new File(propertiesPath));
+
+            config = config == null ?
+                    unresolvedConfig.resolve() :
+                    unresolvedConfig.withFallback(config).resolve();
+        }
 
         return getAllProperties(config, allDimensions);
     }
