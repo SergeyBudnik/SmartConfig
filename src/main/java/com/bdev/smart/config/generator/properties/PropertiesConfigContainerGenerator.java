@@ -128,6 +128,10 @@ public class PropertiesConfigContainerGenerator {
                     "\"" + conditionalProperty.getName() + "\"" +
                     ", " +
                     getUnboxedPropertyValue(conditionalProperty) +
+                    ", " +
+                    Boolean.toString(conditionalProperty.getParent().isReadProtected()) +
+                    ", " +
+                    Boolean.toString(conditionalProperty.getParent().isOverrideProtected()) +
                 ")"
         );
     }
