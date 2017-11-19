@@ -1,10 +1,13 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.dimension.AllDimensions;
+import com.bdev.smart.config.data.inner.dimension.Space;
+import com.bdev.smart.config.data.inner.dimension.SpaceInfo;
 import com.bdev.smart.config.data.inner.property.AllProperties;
 import com.bdev.smart.config.data.inner.property.DefaultProperty;
 import com.bdev.smart.config.parser.property.SmartConfigPropertiesParser;
 import org.junit.Test;
+
+import java.util.HashSet;
 
 import static com.bdev.smart.config.data.inner.property.PropertyType.NUMBER;
 import static org.junit.Assert.assertEquals;
@@ -17,7 +20,7 @@ public class SmartConfigPropertiesParserNamingTest extends SmartConfigParserTest
                         "properties-parser/naming",
                         "test-camel-case-naming"
                 ),
-                new AllDimensions()
+                new SpaceInfo(new Space(), new HashSet<>())
         );
 
         assertEquals(1, allProperties.getAllProperties().size());
@@ -37,7 +40,7 @@ public class SmartConfigPropertiesParserNamingTest extends SmartConfigParserTest
                         "properties-parser/naming",
                         "test-dot-naming"
                 ),
-                new AllDimensions()
+                new SpaceInfo(new Space(), new HashSet<>())
         );
 
         assertEquals(1, allProperties.getAllProperties().size());
@@ -57,7 +60,7 @@ public class SmartConfigPropertiesParserNamingTest extends SmartConfigParserTest
                         "properties-parser/naming",
                         "test-mixed-naming"
                 ),
-                new AllDimensions()
+                new SpaceInfo(new Space(), new HashSet<>())
         );
 
         assertEquals(1, allProperties.getAllProperties().size());

@@ -1,20 +1,31 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.dimension.AllDimensions;
-import com.bdev.smart.config.data.inner.dimension.Dimension;
+import com.bdev.smart.config.data.inner.dimension.*;
 import com.bdev.smart.config.data.inner.property.AllProperties;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import com.bdev.smart.config.parser.property.SmartConfigPropertiesParser;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParserTest {
     @Test
     public void testSimpleInteger() {
-        AllDimensions allDimensions = new AllDimensions(); {
-            allDimensions.addDimension("tier").addValue("sit");
+        Space space = new Space(); {
+            Dimension tierDimension = new Dimension("tier"); {
+                tierDimension.addValue(new DimensionValue("sit"));
+
+                space.addDimension(tierDimension);
+            }
+        }
+
+        Set<Point> points = new HashSet<>(); {
+            Point sitPoint = new Point(); {
+                points.add(sitPoint);
+            }
         }
 
         AllProperties allProperties = SmartConfigPropertiesParser.parse(
@@ -22,7 +33,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-integer"
                 ),
-                allDimensions
+                new SpaceInfo(space, points)
         );
 
         Assert.assertEquals(1, allProperties.getAllProperties().size());
@@ -33,16 +44,26 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         .stream()
                         .filter(it -> it.getValue().equals(3))
                         .filter(it -> it.getType().equals(PropertyType.NUMBER))
-                        .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().containsValue("sit"))
+                        .filter(it -> it.getPoint().getLocation().size() == 1)
+                        .filter(it -> it.getPoint().containsCoordinate("tier", "sit"))
                         .count()
         );
     }
 
     @Test
     public void testSimpleString() {
-        AllDimensions allDimensions = new AllDimensions(); {
-            allDimensions.addDimension("tier").addValue("sit");
+        Space space = new Space(); {
+            Dimension tierDimension = new Dimension("tier"); {
+                tierDimension.addValue(new DimensionValue("sit"));
+
+                space.addDimension(tierDimension);
+            }
+        }
+
+        Set<Point> points = new HashSet<>(); {
+            Point sitPoint = new Point(); {
+                points.add(sitPoint);
+            }
         }
 
         AllProperties allProperties = SmartConfigPropertiesParser.parse(
@@ -50,7 +71,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-string"
                 ),
-                allDimensions
+                new SpaceInfo(space, points)
         );
 
         Assert.assertEquals(1, allProperties.getAllProperties().size());
@@ -61,16 +82,26 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         .stream()
                         .filter(it -> it.getValue().equals("hello"))
                         .filter(it -> it.getType().equals(PropertyType.STRING))
-                        .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().containsValue("sit"))
+                        .filter(it -> it.getPoint().getLocation().size() == 1)
+                        .filter(it -> it.getPoint().containsCoordinate("tier", "sit"))
                         .count()
         );
     }
 
     @Test
     public void testSimpleBoolean() {
-        AllDimensions allDimensions = new AllDimensions(); {
-            allDimensions.addDimension("tier").addValue("sit");
+        Space space = new Space(); {
+            Dimension tierDimension = new Dimension("tier"); {
+                tierDimension.addValue(new DimensionValue("sit"));
+
+                space.addDimension(tierDimension);
+            }
+        }
+
+        Set<Point> points = new HashSet<>(); {
+            Point sitPoint = new Point(); {
+                points.add(sitPoint);
+            }
         }
 
         AllProperties allProperties = SmartConfigPropertiesParser.parse(
@@ -78,7 +109,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-boolean"
                 ),
-                allDimensions
+                new SpaceInfo(space, points)
         );
 
         Assert.assertEquals(1, allProperties.getAllProperties().size());
@@ -89,16 +120,26 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         .stream()
                         .filter(it -> it.getValue().equals(false))
                         .filter(it -> it.getType().equals(PropertyType.BOOLEAN))
-                        .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().containsValue("sit"))
+                        .filter(it -> it.getPoint().getLocation().size() == 1)
+                        .filter(it -> it.getPoint().containsCoordinate("tier", "sit"))
                         .count()
         );
     }
 
     @Test
     public void testSimpleListOfStrings() {
-        AllDimensions allDimensions = new AllDimensions(); {
-            allDimensions.addDimension("tier").addValue("sit");
+        Space space = new Space(); {
+            Dimension tierDimension = new Dimension("tier"); {
+                tierDimension.addValue(new DimensionValue("sit"));
+
+                space.addDimension(tierDimension);
+            }
+        }
+
+        Set<Point> points = new HashSet<>(); {
+            Point sitPoint = new Point(); {
+                points.add(sitPoint);
+            }
         }
 
         AllProperties allProperties = SmartConfigPropertiesParser.parse(
@@ -106,7 +147,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-list-of-strings"
                 ),
-                allDimensions
+                new SpaceInfo(space, points)
         );
 
         Assert.assertEquals(1, allProperties.getAllProperties().size());
@@ -120,16 +161,26 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         .filter(it -> ((List) it.getValue()).contains("hello_2"))
                         .filter(it -> ((List) it.getValue()).contains("hello_3"))
                         .filter(it -> it.getType().equals(PropertyType.LIST_OF_STRINGS))
-                        .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().containsValue("sit"))
+                        .filter(it -> it.getPoint().getLocation().size() == 1)
+                        .filter(it -> it.getPoint().containsCoordinate("tier", "sit"))
                         .count()
         );
     }
 
     @Test
     public void testSimpleListOfNumbers() {
-        AllDimensions allDimensions = new AllDimensions(); {
-            allDimensions.addDimension("tier").addValue("sit");
+        Space space = new Space(); {
+            Dimension tierDimension = new Dimension("tier"); {
+                tierDimension.addValue(new DimensionValue("sit"));
+
+                space.addDimension(tierDimension);
+            }
+        }
+
+        Set<Point> points = new HashSet<>(); {
+            Point sitPoint = new Point(); {
+                points.add(sitPoint);
+            }
         }
 
         AllProperties allProperties = SmartConfigPropertiesParser.parse(
@@ -137,7 +188,7 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-list-of-numbers"
                 ),
-                allDimensions
+                new SpaceInfo(space, points)
         );
 
         Assert.assertEquals(1, allProperties.getAllProperties().size());
@@ -151,16 +202,26 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         .filter(it -> ((List) it.getValue()).contains(2))
                         .filter(it -> ((List) it.getValue()).contains(3))
                         .filter(it -> it.getType().equals(PropertyType.LIST_OF_NUMBERS))
-                        .filter(it -> it.getDimensions().size() == 1)
-                        .filter(it -> it.getDimensions().containsValue("sit"))
+                        .filter(it -> it.getPoint().getLocation().size() == 1)
+                        .filter(it -> it.getPoint().containsCoordinate("tier", "sit"))
                         .count()
         );
     }
 
     @Test(expected = RuntimeException.class)
     public void testSimpleListOfMixed() {
-        AllDimensions allDimensions = new AllDimensions(); {
-            allDimensions.addDimension("tier").addValue("sit");
+        Space space = new Space(); {
+            Dimension tierDimension = new Dimension("tier"); {
+                tierDimension.addValue(new DimensionValue("sit"));
+
+                space.addDimension(tierDimension);
+            }
+        }
+
+        Set<Point> points = new HashSet<>(); {
+            Point sitPoint = new Point(); {
+                points.add(sitPoint);
+            }
         }
 
         SmartConfigPropertiesParser.parse(
@@ -168,25 +229,32 @@ public class SmartConfigPropertiesParserTypeSafetyTest extends SmartConfigParser
                         "properties-parser/type-safety",
                         "test-type-safety-list-of-mixed"
                 ),
-                allDimensions
+                new SpaceInfo(space, points)
         );
     }
 
     @Test(expected = RuntimeException.class)
     public void testTypeSafetyMultipleValuesListOfMixed() {
-        AllDimensions allDimensions = new AllDimensions(); {
-            Dimension dimension = allDimensions.addDimension("tier"); {
-                dimension.addValue("sit");
-                dimension.addValue("uat");
+        Space space = new Space(); {
+            Dimension tierDimension = new Dimension("tier"); {
+                tierDimension.addValue(new DimensionValue("sit"));
+                tierDimension.addValue(new DimensionValue("uat"));
+
+                space.addDimension(tierDimension);
             }
         }
 
+        Set<Point> points = new HashSet<>(); {
+            Point sitPoint = new Point(); {
+                points.add(sitPoint);
+            }
+        }
         SmartConfigPropertiesParser.parse(
                 getConfigPath(
                         "properties-parser/type-safety",
                         "test-type-safety-multiple-values-list-of-mixed"
                 ),
-                allDimensions
+                new SpaceInfo(space, points)
         );
     }
 }

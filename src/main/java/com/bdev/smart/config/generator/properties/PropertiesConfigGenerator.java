@@ -9,11 +9,9 @@ import com.bdev.smart.config.generator.utils.SmartConfigTypesMatcher;
 import net.sourceforge.jenesis4java.*;
 
 public class PropertiesConfigGenerator {
-    public static void generate(
-            VirtualMachine vm,
-            String rootPath,
-            ConfigInfo configInfo
-    ) throws Exception {
+    public static void generate(VirtualMachine vm, String rootPath, ConfigInfo configInfo)
+            throws Exception {
+
         CompilationUnit unit = vm.newCompilationUnit(rootPath);
 
         unit.setNamespace(SmartConfigNamespace.VALUE);
