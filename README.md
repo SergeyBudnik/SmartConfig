@@ -1,5 +1,7 @@
 # SmartConfig
 
+https://maven-badges.herokuapp.com/maven-central/com.github.sergeybudnik/smart.config/badge.(svg|png)?style={style}
+
 ### About
 
 TBD
