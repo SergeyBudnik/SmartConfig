@@ -1,7 +1,9 @@
 package com.bdev.smart.config.parser.property;
 
-import com.bdev.smart.config.data.inner.dimension.AllDimensions;
 import com.bdev.smart.config.data.inner.dimension.Dimension;
+import com.bdev.smart.config.data.inner.dimension.DimensionValue;
+import com.bdev.smart.config.data.inner.dimension.Point;
+import com.bdev.smart.config.data.inner.dimension.SpaceInfo;
 import com.bdev.smart.config.data.inner.property.*;
 import com.bdev.smart.config.exceptions.PropertyIsInvalid;
 import com.typesafe.config.Config;
@@ -10,6 +12,7 @@ import com.typesafe.config.ConfigValue;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 import static com.bdev.smart.config.parser.property.SmartConfigPropertyResolver.getDimensions;
 import static com.bdev.smart.config.parser.property.SmartConfigPropertyResolver.getName;
@@ -21,10 +24,7 @@ public class SmartConfigPropertiesParser {
     private static final String MODIFIER_UNSAFE_READ = "-r";
     private static final String MODIFIER_UNSAFE_OVERRIDE = "-o";
 
-    public static AllProperties parse(
-            String csvPropertiesPath,
-            AllDimensions allDimensions
-    ) {
+    public static AllProperties parse(String csvPropertiesPath, SpaceInfo spaceInfo) {
         String [] propertiesPaths = csvPropertiesPath.split(",");
 
         Config config = null;
@@ -41,10 +41,10 @@ public class SmartConfigPropertiesParser {
                     unresolvedConfig.withFallback(config).resolve();
         }
 
-        return getAllProperties(config, allDimensions);
+        return getAllProperties(config, spaceInfo);
     }
 
-    private static AllProperties getAllProperties(Config config, AllDimensions allDimensions) {
+    private static AllProperties getAllProperties(Config config, SpaceInfo spaceInfo) {
         AllProperties allProperties = new AllProperties();
 
         config
@@ -64,7 +64,7 @@ public class SmartConfigPropertiesParser {
                         if (dimensionsValues.size() == 0 || dimensionsValues.contains(DEFAULT_PROPERTY_KEYWORD)) {
                             processDefaultProperty(dimensionsValues, property, propertyName, propertyValue, propertyType);
                         } else {
-                            processProperty(property, allDimensions, allProperties, propertyName, propertyValue, propertyType, dimensionsValues);
+                            processProperty(property, spaceInfo, allProperties, propertyName, propertyValue, propertyType, dimensionsValues);
                         }
                     }
                 });
@@ -95,20 +95,19 @@ public class SmartConfigPropertiesParser {
 
     private static void processProperty(
             Property property,
-            AllDimensions allDimensions,
+            SpaceInfo spaceInfo,
             AllProperties allProperties,
             String propertyName,
             Object propertyValue,
             PropertyType propertyType,
             List<String> dimensionsValues
     ) {
-        DimensionProperty dimensionProperty = getDimensionProperty(
+        PointProperty dimensionProperty = new PointProperty(
                 property,
-                allDimensions,
                 propertyName,
                 propertyValue,
                 propertyType,
-                dimensionsValues
+                point(spaceInfo, dimensionsValues)
         );
 
         allProperties
@@ -126,31 +125,21 @@ public class SmartConfigPropertiesParser {
         }
     }
 
-    private static DimensionProperty getDimensionProperty(
-            Property property,
-            AllDimensions allDimensions,
-            String propertyName,
-            Object propertyValue,
-            PropertyType propertyType,
-            List<String> dimensionsValues
-    ) {
-        DimensionProperty dimensionProperty = new DimensionProperty(
-                property,
-                propertyName,
-                propertyValue,
-                propertyType
-        ); {
-            for (String dimensionValue : dimensionsValues) {
-                Dimension dimension = allDimensions.findDimensionByValue(dimensionValue);
+    private static Point point(SpaceInfo spaceInfo, List<String> dimensionsValues) {
+        Point point = new Point();
 
-                dimensionProperty.addDimension(
-                        dimension.getName(),
-                        dimensionValue
-                );
+        for (String dimensionValueName : dimensionsValues) {
+            DimensionValue dimensionValue = new DimensionValue(dimensionValueName);
+            Optional<Dimension> dimension = spaceInfo.getSpace().getDimensionByValue(dimensionValue);
+
+            if (!dimension.isPresent()) {
+                throw new RuntimeException();
             }
+
+            point.addCoordinate(dimension.get(), dimensionValue);
         }
 
-        return dimensionProperty;
+        return point;
     }
 
     private static PropertyType getType(String propertyName, ConfigValue configValue, Object value) {

@@ -1,11 +1,14 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.dimension.AllDimensions;
+import com.bdev.smart.config.data.inner.dimension.*;
 import com.bdev.smart.config.data.inner.property.AllProperties;
 import com.bdev.smart.config.data.inner.property.DefaultProperty;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import com.bdev.smart.config.parser.property.SmartConfigPropertiesParser;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -17,7 +20,7 @@ public class SmartConfigPropertiesParserDefaultTest extends SmartConfigParserTes
                         "properties-parser/default",
                         "test-property-with-default"
                 ),
-                new AllDimensions()
+                new SpaceInfo(new Space(), new HashSet<>())
         );
 
         assertEquals(1, allProperties.getAllProperties().size());
@@ -37,7 +40,7 @@ public class SmartConfigPropertiesParserDefaultTest extends SmartConfigParserTes
                         "properties-parser/default",
                         "test-property-with-inline-default"
                 ),
-                new AllDimensions()
+                new SpaceInfo(new Space(), new HashSet<>())
         );
 
         assertEquals(1, allProperties.getAllProperties().size());
@@ -52,8 +55,18 @@ public class SmartConfigPropertiesParserDefaultTest extends SmartConfigParserTes
 
     @Test
     public void testPropertyWithValueAndDefault() {
-        AllDimensions allDimensions = new AllDimensions(); {
-            allDimensions.addDimension("tier").addValue("sit");
+        Space space = new Space(); {
+            Dimension tierDimension = new Dimension("tier"); {
+                tierDimension.addValue(new DimensionValue("sit"));
+
+                space.addDimension(tierDimension);
+            }
+        }
+
+        Set<Point> points = new HashSet<>(); {
+            Point sitPoint = new Point(); {
+                points.add(sitPoint);
+            }
         }
 
         AllProperties allProperties = SmartConfigPropertiesParser.parse(
@@ -61,7 +74,7 @@ public class SmartConfigPropertiesParserDefaultTest extends SmartConfigParserTes
                         "properties-parser/default",
                         "test-property-with-values-and-default"
                 ),
-                allDimensions
+                new SpaceInfo(space, points)
         );
 
         assertEquals(1, allProperties.getAllProperties().size());
@@ -73,8 +86,8 @@ public class SmartConfigPropertiesParserDefaultTest extends SmartConfigParserTes
                 .stream()
                 .filter(it -> it.getValue().equals(1))
                 .filter(it -> it.getType().equals(PropertyType.NUMBER))
-                .filter(it -> it.getDimensions().size() == 1)
-                .filter(it -> it.getDimensions().get("tier").equals("sit"))
+                .filter(it -> it.getPoint().getLocation().size() == 1)
+                .filter(it -> it.getPoint().getLocation().get(new Dimension("tier")).equals(new DimensionValue("sit")))
                 .count()
         );
 
@@ -86,8 +99,18 @@ public class SmartConfigPropertiesParserDefaultTest extends SmartConfigParserTes
 
     @Test(expected = RuntimeException.class)
     public void testPropertyWithDefaultTypesConflict() {
-        AllDimensions allDimensions = new AllDimensions(); {
-            allDimensions.addDimension("tier").addValue("sit");
+        Space space = new Space(); {
+            Dimension tierDimension = new Dimension("tier"); {
+                tierDimension.addValue(new DimensionValue("sit"));
+
+                space.addDimension(tierDimension);
+            }
+        }
+
+        Set<Point> points = new HashSet<>(); {
+            Point sitPoint = new Point(); {
+                points.add(sitPoint);
+            }
         }
 
         SmartConfigPropertiesParser.parse(
@@ -95,7 +118,7 @@ public class SmartConfigPropertiesParserDefaultTest extends SmartConfigParserTes
                         "properties-parser/default",
                         "test-property-with-default-types-conflict"
                 ),
-                allDimensions
+                new SpaceInfo(space, points)
         );
     }
 }

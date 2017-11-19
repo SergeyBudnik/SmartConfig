@@ -1,20 +1,18 @@
 package com.bdev.smart.config.generator.properties;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
+import com.bdev.smart.config.data.inner.dimension.Point;
 import com.bdev.smart.config.data.inner.property.ConditionalProperty;
 import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.data.inner.property.PropertyType;
-import com.bdev.smart.config.data.util.Tuple;
 import com.bdev.smart.config.generator.utils.SmartConfigImports;
 import com.bdev.smart.config.generator.utils.SmartConfigNamesMatcher;
 import com.bdev.smart.config.generator.utils.SmartConfigNamespace;
 import com.bdev.smart.config.generator.utils.SmartConfigTypesMatcher;
 import net.sourceforge.jenesis4java.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
-import java.util.function.Consumer;
+import java.util.Set;
 
 public class PropertiesConfigContainerGenerator {
     public static void generate(
@@ -51,11 +49,10 @@ public class PropertiesConfigContainerGenerator {
             PackageClass smartConfigPropertiesClass,
             ConfigInfo configInfo
     ) {
-        List<String> dimensionNames = new ArrayList<>(configInfo.getAllDimensions().getDimensions().keySet());
+        Set<Point> points = configInfo.getSpaceInfo().getPoints();
 
-        Consumer<Stack<Tuple<String, String>>> generator = dimensionValues -> {
-            String dimensionPropertiesName = SmartConfigNamesMatcher
-                    .getDimensionPropertiesClassName(dimensionValues);
+        for (Point point : points) {
+            String dimensionPropertiesName = point.getName() + "SmartConfig";
 
             InnerClass dimensionPropertyClass = smartConfigPropertiesClass
                     .newInnerClass(dimensionPropertiesName);
@@ -68,8 +65,7 @@ public class PropertiesConfigContainerGenerator {
             for (String propertyName : configInfo.getAllProperties().getAllProperties().keySet()) {
                 Property property = configInfo.getAllProperties().getAllProperties().get(propertyName);
 
-                ConditionalProperty conditionalProperty = property
-                        .getMostSuitableProperty(dimensionValues);
+                ConditionalProperty conditionalProperty = property.getMostSuitableProperty(point);
 
                 ClassField f = dimensionPropertyClass.newField(
                         vm.newType(SmartConfigTypesMatcher.getType(property.getType())),
@@ -97,7 +93,7 @@ public class PropertiesConfigContainerGenerator {
 
             Field smartConfigPropertiesInstance = smartConfigPropertiesClass.newField(
                     vm.newType(dimensionPropertiesName),
-                    SmartConfigNamesMatcher.getDimensionPropertiesInstanceName(dimensionValues)
+                    dimensionPropertiesName // ToDo
             );
 
             smartConfigPropertiesInstance.setAccess(Access.PRIVATE);
@@ -105,18 +101,10 @@ public class PropertiesConfigContainerGenerator {
 
             smartConfigPropertiesInstance.setExpression(vm.newVar(
                     "new " +
-                        SmartConfigNamesMatcher.getDimensionPropertiesClassName(dimensionValues) +
+                            dimensionPropertiesName +
                     "()"
             ));
-        };
-
-        PropertiesConfigGeneratorUtils.gatherDimensionsMultiplication(
-                configInfo,
-                dimensionNames,
-                0,
-                new Stack<>(),
-                generator
-        );
+        }
     }
 
     private static Expression getPropertyValue(

@@ -1,9 +1,10 @@
 package com.bdev.smart.config.parser;
 
-import com.bdev.smart.config.data.inner.dimension.AllDimensions;
-import com.bdev.smart.config.parser.dimension.SmartConfigDimensionsParser;
-import org.junit.Ignore;
+import com.bdev.smart.config.data.inner.dimension.*;
+import com.bdev.smart.config.parser.dimension.SmartConfigSpaceParser;
 import org.junit.Test;
+
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -11,82 +12,152 @@ import static org.junit.Assert.assertTrue;
 public class SmartConfigDimensionsParserTest extends SmartConfigParserTest {
     @Test
     public void testSingleDimensionSingleValue() {
-        AllDimensions allDimensions = SmartConfigDimensionsParser.parse(
+        SpaceInfo spaceInfo = SmartConfigSpaceParser.parse(
                 getConfigPath(
                         "dimensions-parser",
                         "test-dimension-single-value-single"
                 )
         );
 
-        assertEquals(1, allDimensions.getDimensions().size());
-        assertEquals(1, allDimensions.getDimensions().get("tier").getValues().size());
-        assertTrue(allDimensions.getDimensions().get("tier").getValues().contains("sit"));
+        Space space = spaceInfo.getSpace(); {
+            assertEquals(1, space.getDimensions().size());
+
+            Dimension sitDimension = space.getDimensionByName("tier")
+                    .orElseThrow(RuntimeException::new); {
+                assertEquals(1, sitDimension.getValues().size());
+                assertTrue(sitDimension.getValue("sit").isPresent());
+            }
+        }
+
+        assertEquals(1, spaceInfo.getPoints().size());
+        assertTrue(spaceInfo.getPoints().stream()
+                .anyMatch(it -> it.containsCoordinate("tier", "sit"))
+        );
     }
 
     @Test
     public void testSingleDimensionMultipleValues() {
-        AllDimensions dimensionsInfo = SmartConfigDimensionsParser.parse(
+        SpaceInfo spaceInfo = SmartConfigSpaceParser.parse(
                 getConfigPath(
                         "dimensions-parser",
                         "test-dimension-single-values-multiple"
                 )
         );
 
-        assertEquals(1, dimensionsInfo.getDimensions().size());
-        assertEquals(2, dimensionsInfo.getDimensions().get("tier").getValues().size());
-        assertTrue(dimensionsInfo.getDimensions().get("tier").getValues().contains("sit"));
-        assertTrue(dimensionsInfo.getDimensions().get("tier").getValues().contains("uat"));
-    }
+        Space space = spaceInfo.getSpace(); {
+            assertEquals(1, space.getDimensions().size());
 
-    @Test(expected = RuntimeException.class)
-    public void testSingleDimensionMultipleValuesConflict() {
-        SmartConfigDimensionsParser.parse(
-                getConfigPath(
-                        "dimensions-parser",
-                        "test-dimension-single-values-multiple-conflict"
-                )
-        );
+            Dimension sitDimension = space.getDimensionByName("tier")
+                    .orElseThrow(RuntimeException::new); {
+                assertEquals(2, sitDimension.getValues().size());
+                assertTrue(sitDimension.getValue("sit").isPresent());
+                assertTrue(sitDimension.getValue("uat").isPresent());
+            }
+        }
+
+        Set<Point> points = spaceInfo.getPoints(); {
+            assertEquals(2, points.size());
+
+            assertTrue(points.stream()
+                    .anyMatch(it -> it.containsCoordinate("tier", "sit"))
+            );
+
+            assertTrue(points.stream()
+                    .anyMatch(it -> it.containsCoordinate("tier", "uat"))
+            );
+        }
     }
 
     @Test
     public void testMultipleDimensionsSingleValue() {
-        AllDimensions dimensionsInfo = SmartConfigDimensionsParser.parse(
+        SpaceInfo spaceInfo = SmartConfigSpaceParser.parse(
                 getConfigPath(
                         "dimensions-parser",
                         "test-dimensions-multiple-value-single"
                 )
         );
 
-        assertEquals(2, dimensionsInfo.getDimensions().size());
+        Space space = spaceInfo.getSpace(); {
+            assertEquals(2, space.getDimensions().size());
 
-        assertEquals(1, dimensionsInfo.getDimensions().get("tier").getValues().size());
-        assertTrue(dimensionsInfo.getDimensions().get("tier").getValues().contains("sit"));
+            Dimension tierDimension = space.getDimensionByName("tier")
+                    .orElseThrow(RuntimeException::new); {
+                assertEquals(1, tierDimension.getValues().size());
+                assertTrue(tierDimension.getValue("sit").isPresent());
+            }
 
-        assertEquals(1, dimensionsInfo.getDimensions().get("zone").getValues().size());
-        assertTrue(dimensionsInfo.getDimensions().get("zone").getValues().contains("uk"));
-    }
+            Dimension zoneDimension = space.getDimensionByName("zone")
+                    .orElseThrow(RuntimeException::new); {
+                assertEquals(1, zoneDimension.getValues().size());
+                assertTrue(zoneDimension.getValue("uk").isPresent());
+            }
+        }
 
-    /**
-     * Equal keys are ignored by typesafe config implementation
-     */
-    @Test(expected = RuntimeException.class)
-    @Ignore
-    public void testMultipleDimensionsSingleValueNamesConflict() {
-        SmartConfigDimensionsParser.parse(
-                getConfigPath(
-                        "dimensions-parser",
-                        "test-dimensions-multiple-value-single-names-conflict"
-                )
-        );
+        Set<Point> points = spaceInfo.getPoints(); {
+            assertEquals(1, points.size());
+
+            assertTrue(points.stream()
+                    .filter(it -> it.containsCoordinate("tier", "sit"))
+                    .filter(it -> it.containsCoordinate("zone", "uk"))
+                    .anyMatch(it -> true)
+            );
+        }
     }
 
     @Test(expected = RuntimeException.class)
     public void testMultipleDimensionsSingleValueValuesConflict() {
-        SmartConfigDimensionsParser.parse(
-                getConfigPath(
-                        "dimensions-parser",
-                        "test-dimensions-multiple-value-single-values-conflict"
-                )
-        );
+        try {
+            SmartConfigSpaceParser.parse(
+                    getConfigPath(
+                            "dimensions-parser",
+                            "test-dimensions-multiple-value-single-values-conflict"
+                    )
+            );
+        } catch (RuntimeException e) {
+            assertEquals(
+                    "Dimension 'tier' already contains value 'sit'",
+                    e.getMessage()
+            );
+
+            throw e;
+        }
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testSingleDimensionMultipleValuesConflict() {
+        try {
+            SmartConfigSpaceParser.parse(
+                    getConfigPath(
+                            "dimensions-parser",
+                            "test-dimension-single-values-multiple-conflict"
+                    )
+            );
+        } catch (RuntimeException e) {
+            assertEquals(
+                    "Dimension 'tier' already contains value 'sit'",
+                    e.getMessage()
+            );
+
+            throw e;
+        }
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testDimensionUncompleted() {
+        try {
+            SmartConfigSpaceParser.parse(
+                    getConfigPath(
+                            "dimensions-parser",
+                            "test-dimension-uncompleted"
+                    )
+            );
+        } catch (RuntimeException e) {
+            assertEquals(
+                    "Point \n{\ntier: sit\n}\nis not completed\n",
+                    e.getMessage()
+            );
+
+            throw e;
+        }
     }
 }

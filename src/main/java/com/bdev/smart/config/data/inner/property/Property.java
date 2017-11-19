@@ -1,5 +1,8 @@
 package com.bdev.smart.config.data.inner.property;
 
+import com.bdev.smart.config.data.inner.dimension.Dimension;
+import com.bdev.smart.config.data.inner.dimension.DimensionValue;
+import com.bdev.smart.config.data.inner.dimension.Point;
 import com.bdev.smart.config.data.util.Tuple;
 import com.bdev.smart.config.exceptions.PropertyIsInvalid;
 import lombok.Data;
@@ -7,6 +10,7 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -14,7 +18,7 @@ public class Property {
     private String name;
     private PropertyType type;
     private DefaultProperty defaultProperty;
-    private Collection<DimensionProperty> dimensionsProperty = new ArrayList<>();
+    private Collection<PointProperty> dimensionsProperty = new ArrayList<>();
     private boolean readProtected = true;
     private boolean overrideProtected = true;
 
@@ -38,7 +42,7 @@ public class Property {
         this.defaultProperty = defaultProperty;
     }
 
-    public void addDimensionProperty(DimensionProperty dimensionProperty) {
+    public void addDimensionProperty(PointProperty dimensionProperty) {
         if (type == null) {
             type = dimensionProperty.getType();
         } else {
@@ -51,10 +55,8 @@ public class Property {
     }
 
     // ToDo: Test
-    public ConditionalProperty getMostSuitableProperty(
-            List<Tuple<String, String>> dimensionsValues
-    ) {
-        List<Tuple<Integer, DimensionProperty>> weightedDimensionsPropertyInfo =
+    public ConditionalProperty getMostSuitableProperty(Point point) {
+        List<Tuple<Integer, PointProperty>> weightedDimensionsPropertyInfo =
                 new ArrayList<>();
 
         if (dimensionsProperty.size() == 0) {
@@ -64,10 +66,10 @@ public class Property {
 
             return defaultProperty;
         } else {
-            for (DimensionProperty dimensionProperty : dimensionsProperty) {
+            for (PointProperty dimensionProperty : dimensionsProperty) {
                 weightedDimensionsPropertyInfo.add(
                         new Tuple<>(
-                                calculatePropertyWeight(dimensionProperty, dimensionsValues),
+                                calculatePropertyWeight(dimensionProperty, point),
                                 dimensionProperty
                         )
                 );
@@ -79,7 +81,7 @@ public class Property {
                     .max()
                     .orElseThrow(RuntimeException::new);
 
-            List<DimensionProperty> dimensionPropertiesWithMaxWeight = weightedDimensionsPropertyInfo
+            List<PointProperty> dimensionPropertiesWithMaxWeight = weightedDimensionsPropertyInfo
                     .stream()
                     .filter(it -> it.getA() > 0)
                     .filter(it -> it.getA() == maxWeight)
@@ -100,30 +102,21 @@ public class Property {
         }
     }
 
-    private int calculatePropertyWeight(
-            DimensionProperty dimensionProperty,
-            List<Tuple<String, String>> dimensionsValues
-    ) {
+    private int calculatePropertyWeight(PointProperty dimensionProperty, Point point) {
         int weight = 0;
 
-        for (String dimensionName : dimensionProperty.getDimensions().keySet()) {
-            String dimensionValue = dimensionProperty.getDimensions().get(dimensionName);
+        Map<Dimension, DimensionValue> location = dimensionProperty.getPoint().getLocation();
 
-            boolean dimensionSuitable = dimensionsValues
-                    .stream()
-                    .map(Tuple::getB)
-                    .anyMatch(it -> it.equals(dimensionValue));
+        for (Dimension dimension : location.keySet()) {
+            DimensionValue v1 = point.getLocation().get(dimension);
+            DimensionValue v2 = location.get(dimension);
 
-            if (!dimensionSuitable) {
-                return -1;
-            }
-        }
-
-        for (Tuple<String, String> dimensionValueInfo : dimensionsValues) {
-            String dimensionValue = dimensionValueInfo.getB();
-
-            if (dimensionProperty.getDimensions().containsValue(dimensionValue)) {
-                weight++;
+            if (v2 != null) {
+                if (v1.equals(v2)) {
+                    weight++;
+                } else {
+                    return -1;
+                }
             }
         }
 

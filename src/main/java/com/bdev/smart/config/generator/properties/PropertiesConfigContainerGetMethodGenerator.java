@@ -1,6 +1,9 @@
 package com.bdev.smart.config.generator.properties;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
+import com.bdev.smart.config.data.inner.dimension.Dimension;
+import com.bdev.smart.config.data.inner.dimension.DimensionValue;
+import com.bdev.smart.config.data.inner.dimension.Point;
 import com.bdev.smart.config.data.util.Tuple;
 import com.bdev.smart.config.generator.utils.SmartConfigNamesMatcher;
 import net.sourceforge.jenesis4java.*;
@@ -14,8 +17,7 @@ class PropertiesConfigContainerGetMethodGenerator {
             PackageClass smartConfigProperties,
             ConfigInfo configInfo
     ) {
-        ClassMethod getConfigMethod =
-                smartConfigProperties.newMethod(
+        ClassMethod getConfigMethod = smartConfigProperties.newMethod(
                 vm.newType("SmartConfig"),
                 "getConfig"
         ); {
@@ -23,40 +25,33 @@ class PropertiesConfigContainerGetMethodGenerator {
             getConfigMethod.isStatic(true);
         }
 
-        for (String dimensionName : configInfo.getAllDimensions().getDimensions().keySet()) {
-            getConfigMethod.addParameter(vm.newType("String"), dimensionName);
+        for (Dimension dimension: configInfo.getSpaceInfo().getSpace().getDimensions()) {
+            getConfigMethod.addParameter(vm.newType("String"), dimension.getName());
         }
 
-        PropertiesConfigGeneratorUtils.gatherDimensionsMultiplication(
-                configInfo,
-                new ArrayList<>(configInfo.getAllDimensions().getDimensions().keySet()),
-                0,
-                new Stack<>(),
-                dimensionValues -> {
-                    Expression e = null;
+        for (Point point: configInfo.getSpaceInfo().getPoints()) {
+            Expression e = null;
 
-                    for (Tuple<String, String> dimensionValue : dimensionValues) {
-                        Invoke invoke = vm.newInvoke(dimensionValue.getA(), "equals");
+            for (Dimension dimension: point.getLocation().keySet()) {
+                DimensionValue dimensionValue = point.getLocation().get(dimension);
 
-                        invoke.addArg(dimensionValue.getB());
+                Invoke invoke = vm.newInvoke(dimension.getName(), "equals");
 
-                        if (e == null) {
-                            e = invoke;
-                        } else {
-                            e = vm.newBinary(Binary.AND,
-                                    e,
-                                    invoke
-                            );
-                        }
-                    }
+                invoke.addArg(dimensionValue.getName());
 
-                    If chooseConfigIf = getConfigMethod.newIf(e);
-
-                    chooseConfigIf.newReturn().setExpression(vm.newVar(
-                            SmartConfigNamesMatcher.getDimensionPropertiesInstanceName(dimensionValues)
-                    ));
+                if (e == null) {
+                    e = invoke;
+                } else {
+                    e = vm.newBinary(Binary.AND, e, invoke);
                 }
-        );
+            }
+
+            If chooseConfigIf = getConfigMethod.newIf(e);
+
+            chooseConfigIf.newReturn().setExpression(vm.newVar(
+                    point.getName() + "SmartConfig"
+            ));
+        }
 
         getConfigMethod.newThrow(vm.newVar("new RuntimeException()"));
     }
