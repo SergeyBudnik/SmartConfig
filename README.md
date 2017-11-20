@@ -1,6 +1,7 @@
 # SmartConfig
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.sergeybudnik/smart.config/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.sergeybudnik/smart.config/badge.png)
+(https://api.travis-ci.org/SergeyBudnik/SmartConfig.svg?branch=master)
 
 ### About
 
