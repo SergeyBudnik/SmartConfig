@@ -76,4 +76,27 @@ test1.override(32); // Override the value. Subscriber will print '32'
 
 ### Integration
 
-TBD
+```
+<properties>
+    <smart.config.csvProperties>${project.basedir}/src/main/resources/{config-file}.conf</smart.config.csvProperties>
+    <smart.config.dimensions>${project.basedir}/src/main/resources/{dimensions-file}.conf</smart.config.dimensions>
+</properties>
+
+<dependencies>
+    <dependency>
+        <groupId>com.github.sergeybudnik</groupId>
+        <artifactId>smart.config.data</artifactId>
+        <version>2.0.0</version>
+    </dependency>
+</dependencies>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>com.github.sergeybudnik</groupId>
+            <artifactId>smart.config</artifactId>
+            <version>2.0.0</version>
+        </plugin>
+    </plugins>
+</build>
+```
