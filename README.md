@@ -2,7 +2,7 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.sergeybudnik/smart.config/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.sergeybudnik/smart.config/badge.png)
 
-[![Maven Central](https://api.travis-ci.org/SergeyBudnik/SmartConfig.svg?branch=master)]
+![Maven Central](https://api.travis-ci.org/SergeyBudnik/SmartConfig.svg?branch=master)
 
 ### About
 
