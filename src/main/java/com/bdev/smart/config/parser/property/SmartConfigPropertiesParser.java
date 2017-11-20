@@ -34,7 +34,7 @@ public class SmartConfigPropertiesParser {
         }
 
         for (String propertiesPath : propertiesPaths) {
-            Config unresolvedConfig = ConfigFactory.parseFile(new File(propertiesPath));
+            Config unresolvedConfig = ConfigFactory.parseFile(new File(propertiesPath.trim()));
 
             config = config == null ?
                     unresolvedConfig.resolve() :
