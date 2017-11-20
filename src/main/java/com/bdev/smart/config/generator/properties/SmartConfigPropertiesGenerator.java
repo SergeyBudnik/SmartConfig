@@ -4,15 +4,48 @@ import com.bdev.smart.config.data.inner.ConfigInfo;
 import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.data.inner.dimension.DimensionValue;
 import com.bdev.smart.config.data.inner.dimension.Point;
-import com.bdev.smart.config.data.util.Tuple;
-import com.bdev.smart.config.generator.utils.SmartConfigNamesMatcher;
+import com.bdev.smart.config.generator.utils.SmartConfigImports;
+import com.bdev.smart.config.generator.utils.SmartConfigNamespace;
 import net.sourceforge.jenesis4java.*;
 
-import java.util.ArrayList;
-import java.util.Stack;
+public class SmartConfigPropertiesGenerator {
+    public static void generate(VirtualMachine vm, String rootPath, ConfigInfo configInfo) throws Exception {
+        CompilationUnit unit = vm.newCompilationUnit(rootPath);
 
-class PropertiesConfigContainerGetMethodGenerator {
-    static void generate(
+        unit.setNamespace(SmartConfigNamespace.VALUE);
+
+        unit.addImport(SmartConfigImports.LIST_IMPORT);
+        unit.addImport(SmartConfigImports.COLLECTIONS_IMPORT);
+        unit.addImport(SmartConfigImports.ARRAYS_IMPORT);
+        unit.addImport(SmartConfigImports.OPTIONAL_IMPORT);
+
+        unit.addImport(SmartConfigImports.SMART_CONFIG_IMPORT);
+        unit.addImport(SmartConfigImports.SMART_CONFIG_VALUE_IMPORT);
+
+        PackageClass smartConfigProperties = unit.newClass("SmartConfigProperties");
+
+        smartConfigProperties.setAccess(Access.PUBLIC);
+
+        for (Point point : configInfo.getSpaceInfo().getPoints()) {
+            Field smartConfigPropertiesInstance = smartConfigProperties.newField(
+                    vm.newType(point.getName() + "SmartConfig"),
+                    point.getName() + "SmartConfig"
+            );
+
+            smartConfigPropertiesInstance.setAccess(Access.PRIVATE);
+            smartConfigPropertiesInstance.isStatic(true);
+
+            smartConfigPropertiesInstance.setExpression(vm.newVar(
+                    "new " + point.getName() + "SmartConfig" + "()"
+            ));
+        }
+
+        generateGetConfigMethod(vm, smartConfigProperties, configInfo);
+
+        unit.encode();
+    }
+
+    private static void generateGetConfigMethod(
             VirtualMachine vm,
             PackageClass smartConfigProperties,
             ConfigInfo configInfo
