@@ -29,6 +29,7 @@ So, lets get started!
 
 #### First, create a space configuration file (located: ${project.basedir}/src/main/resources/config-spaces.conf)
 
+```
 space {
     env: [sit, uat, prod]
     location: [no_location, rus, usa, india]
@@ -41,9 +42,11 @@ points [
     {env: prod, location: usa},
     {env: prod, location: india},
 ]
+```
 
 #### Now, create a configuration file with the values (located: ${project.basedir}/src/main/resources/config.conf)
 
+```
 database.url {
     ~sit: 'my_sit_database'
     ~uat: 'my_uat_database'
@@ -54,6 +57,7 @@ language {
     ~default: 'eng' // ~default - special keyword for default values
     ~rus: 'russia'
 }
+```
 
 #### Add the following lines to your project pom.xml
 
