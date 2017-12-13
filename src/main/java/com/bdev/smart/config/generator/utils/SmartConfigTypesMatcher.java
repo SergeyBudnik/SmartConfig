@@ -3,16 +3,16 @@ package com.bdev.smart.config.generator.utils;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 
 public class SmartConfigTypesMatcher {
-    public static String getType(PropertyType propertyType) {
-        return "SmartConfigValue<" + getUnboxedType(propertyType) + ">";
+    public static String getConfigType(PropertyType propertyType) {
+        return "SmartConfigValue<" + getType(propertyType, false) + ">";
     }
 
-    private static String getUnboxedType(PropertyType propertyType) {
+    public static String getType(PropertyType propertyType, boolean forcePrimitive) {
         switch (propertyType) {
             case NUMBER:
-                return "Long";
+                return forcePrimitive ? "long" : "Long";
             case BOOLEAN:
-                return "Boolean";
+                return forcePrimitive ? "boolean" : "Boolean";
             case STRING:
                 return "String";
             case LIST_OF_NUMBERS:

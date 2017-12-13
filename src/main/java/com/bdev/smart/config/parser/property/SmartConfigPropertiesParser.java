@@ -19,10 +19,6 @@ import static com.bdev.smart.config.parser.property.SmartConfigPropertyResolver.
 
 public class SmartConfigPropertiesParser {
     private static final String DEFAULT_PROPERTY_KEYWORD = "default";
-    private static final String MODIFIERS_PROPERTY_KEYWORD = "modifiers";
-
-    private static final String MODIFIER_UNSAFE_READ = "-r";
-    private static final String MODIFIER_UNSAFE_OVERRIDE = "-o";
 
     public static AllProperties parse(String csvPropertiesPath, SpaceInfo spaceInfo) {
         String [] propertiesPaths = csvPropertiesPath.split(",");
@@ -56,16 +52,12 @@ public class SmartConfigPropertiesParser {
                     Property property = allProperties.findOrCreateProperty(propertyName);
                     Object propertyValue = config.getAnyRef(configProperty.getKey());
 
-                    if (dimensionsValues.contains(MODIFIERS_PROPERTY_KEYWORD)) {
-                        processModifiers(property, (String) propertyValue);
-                    } else {
-                        PropertyType propertyType = getType(propertyName, configProperty.getValue(), propertyValue);
+                    PropertyType propertyType = getType(propertyName, configProperty.getValue(), propertyValue);
 
-                        if (dimensionsValues.size() == 0 || dimensionsValues.contains(DEFAULT_PROPERTY_KEYWORD)) {
-                            processDefaultProperty(dimensionsValues, property, propertyName, propertyValue, propertyType);
-                        } else {
-                            processProperty(property, spaceInfo, allProperties, propertyName, propertyValue, propertyType, dimensionsValues);
-                        }
+                    if (dimensionsValues.size() == 0 || dimensionsValues.contains(DEFAULT_PROPERTY_KEYWORD)) {
+                        processDefaultProperty(dimensionsValues, property, propertyName, propertyValue, propertyType);
+                    } else {
+                        processProperty(property, spaceInfo, allProperties, propertyName, propertyValue, propertyType, dimensionsValues);
                     }
                 });
 
@@ -113,16 +105,6 @@ public class SmartConfigPropertiesParser {
         allProperties
                 .findOrCreateProperty(propertyName)
                 .addDimensionProperty(dimensionProperty);
-    }
-
-    private static void processModifiers(Property property, String value) {
-        if (value.contains(MODIFIER_UNSAFE_READ)) {
-            property.setReadProtected(false);
-        }
-
-        if (value.contains(MODIFIER_UNSAFE_OVERRIDE)) {
-            property.setOverrideProtected(false);
-        }
     }
 
     private static Point point(SpaceInfo spaceInfo, List<String> dimensionsValues) {
