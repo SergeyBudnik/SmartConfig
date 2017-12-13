@@ -41,21 +41,30 @@ public class SmartConfigPointGenerator {
             ConditionalProperty conditionalProperty = property.getMostSuitableProperty(point);
 
             ClassField f = pointPropertyClass.newField(
-                    vm.newType(SmartConfigTypesMatcher.getType(property.getType())),
+                    vm.newType(SmartConfigTypesMatcher.getConfigType(property.getType())),
                     propertyName
             );
 
             f.setAccess(Access.PRIVATE);
             f.setExpression(getPropertyValue(vm, conditionalProperty));
 
+            ClassMethod getPropertyConfigMethod = pointPropertyClass.newMethod(
+                    vm.newType(SmartConfigTypesMatcher.getConfigType(property.getType())),
+                    SmartConfigNames.getPropertyConfigAccessorName(propertyName)
+            ); {
+                getPropertyConfigMethod.setAccess(Access.PUBLIC);
+                getPropertyConfigMethod.newReturn().setExpression(vm.newVar(propertyName));
+            }
+
             ClassMethod getPropertyMethod = pointPropertyClass.newMethod(
-                    vm.newType(SmartConfigTypesMatcher.getType(property.getType())),
+                    vm.newType(SmartConfigTypesMatcher.getType(property.getType(), true)),
                     SmartConfigNames.getPropertyAccessorName(propertyName)
-            );
-
-            getPropertyMethod.setAccess(Access.PUBLIC);
-
-            getPropertyMethod.newReturn().setExpression(vm.newVar(propertyName));
+            ); {
+                getPropertyMethod.setAccess(Access.PUBLIC);
+                getPropertyMethod.newReturn().setExpression(
+                        vm.newVar(propertyName + ".getValue()")
+                );
+            }
         }
 
         generateAllPropertiesArray(vm, pointPropertyClass, configInfo.getAllProperties());
@@ -100,10 +109,6 @@ public class SmartConfigPointGenerator {
                         "\"" + conditionalProperty.getName() + "\"" +
                         ", " +
                         getUnboxedPropertyValue(conditionalProperty) +
-                        ", " +
-                        Boolean.toString(conditionalProperty.getParent().isReadProtected()) +
-                        ", " +
-                        Boolean.toString(conditionalProperty.getParent().isOverrideProtected()) +
                         ")"
         );
     }

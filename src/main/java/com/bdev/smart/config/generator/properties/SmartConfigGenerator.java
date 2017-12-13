@@ -33,7 +33,12 @@ public class SmartConfigGenerator {
             Property property = configInfo.getAllProperties().getAllProperties().get(propertyName);
 
             smartConfigPropertiesInterface.newMethod(
-                    vm.newType(SmartConfigTypesMatcher.getType(property.getType())),
+                    vm.newType(SmartConfigTypesMatcher.getConfigType(property.getType())),
+                    SmartConfigNames.getPropertyConfigAccessorName(propertyName)
+            );
+
+            smartConfigPropertiesInterface.newMethod(
+                    vm.newType(SmartConfigTypesMatcher.getType(property.getType(), true)),
                     SmartConfigNames.getPropertyAccessorName(propertyName)
             );
         }
