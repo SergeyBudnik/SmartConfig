@@ -71,7 +71,7 @@ language {
     <dependency>
         <groupId>com.github.sergeybudnik</groupId>
         <artifactId>smart.config.data</artifactId>
-        <version>2.0.0</version>
+        <version>3.0.0</version>
     </dependency>
 </dependencies>
 
@@ -103,7 +103,8 @@ After plugin execution, you will be able to work with properties in a following 
 ```
 SmartConfig smartConfig = SmartConfigProperties.getConfig("prod", "usa");
 
-SmartConfigValue<String> databaseUrl = smartConfig.getDatabaseUrl();
+String databaseUrl = smartConfig.getDatabaseUrl();
+SmartConfigValue<String> databaseUrlConfig = smartConfig.getDatabaseUrlConfig();
 
-System.out.println(databaseUrl.forceGetValue()); // Prints 'my_prod_database'
+System.out.println(databaseUrl); // Prints 'my_prod_database'
 ```
