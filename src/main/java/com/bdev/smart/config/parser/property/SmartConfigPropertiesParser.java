@@ -99,7 +99,7 @@ public class SmartConfigPropertiesParser {
                 propertyName,
                 propertyValue,
                 propertyType,
-                point(spaceInfo, dimensionsValues)
+                point(propertyName, spaceInfo, dimensionsValues)
         );
 
         allProperties
@@ -107,7 +107,7 @@ public class SmartConfigPropertiesParser {
                 .addDimensionProperty(dimensionProperty);
     }
 
-    private static Point point(SpaceInfo spaceInfo, List<String> dimensionsValues) {
+    private static Point point(String propertyName, SpaceInfo spaceInfo, List<String> dimensionsValues) {
         Point point = new Point();
 
         for (String dimensionValueName : dimensionsValues) {
@@ -120,7 +120,11 @@ public class SmartConfigPropertiesParser {
                         .reduce((d1, d2) -> d1 + "." + d2)
                         .orElse("");
 
-                throw new RuntimeException("Point with coordinates '" + coordinates + "' does not exist in space");
+                throw new RuntimeException(String.format(
+                        "Invalid property: %s. Point with coordinates '%s' does not exist in space",
+                        propertyName,
+                        coordinates
+                ));
             }
 
             point.addCoordinate(dimension.get(), dimensionValue);
