@@ -17,20 +17,22 @@ import java.io.File;
 public class SmartConfigMojo extends AbstractMojo {
     @Parameter(property = "project", defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
-    @Parameter(property = "outputJavaDirectory", defaultValue = "${project.build.directory}/generated-sources/smart-config", readonly = true, required = true)
-    protected File outputJavaDirectory;
+    @Parameter(property = "buildDirectory", defaultValue = "${project.build.directory}", readonly = true, required = true)
+    protected File buildDirectory;
+    @Parameter(property = "smart.config.relativeDirectory", defaultValue = "/generated-sources/smart-config", required = true)
+    protected String relativeDirectory;
     @Parameter(property = "smart.config.csvProperties", required = true)
-    protected String smartConfigCSVProperties;
+    protected String csvProperties;
     @Parameter(property = "smart.config.dimensions", required = true)
-    protected String smartConfigDimensions;
+    protected String dimensions;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         if (project != null) {
-            project.addCompileSourceRoot(outputJavaDirectory.getAbsolutePath());
+            project.addCompileSourceRoot(getOutputDirectory().getAbsolutePath());
         }
 
-        if (!outputJavaDirectory.mkdirs()) {
+        if (!getOutputDirectory().mkdirs()) {
             throw new RuntimeException("Unable to create new source directory");
         }
 
@@ -40,15 +42,19 @@ public class SmartConfigMojo extends AbstractMojo {
     private void generateJavaCode() throws MojoExecutionException {
         try {
             ConfigInfo configInfo =
-                    SmartConfigParser.parse(smartConfigDimensions, smartConfigCSVProperties);
+                    SmartConfigParser.parse(dimensions, csvProperties);
 
             SmartConfigGenerator
                     .generate(
-                            outputJavaDirectory.getAbsolutePath(),
+                            getOutputDirectory().getAbsolutePath(),
                             configInfo
                     );
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage());
         }
+    }
+
+    private File getOutputDirectory() {
+        return new File(buildDirectory.getAbsolutePath() + relativeDirectory);
     }
 }
