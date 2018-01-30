@@ -1,0 +1,19 @@
+Release 1.* - 28.04.2017
++ First release with all general SmartConfig features
+
+--------------------------------------------------------------------------------
+
+Release 2.* - 20.11.2017
++ Formalized space configuration - configure n-dimensional configuration space and points
++ Pilot safe-read and safe-write modifiers introduced
+
+--------------------------------------------------------------------------------
+
+Release 3.0 - 13.12.2017
++ Simplified syntax with separate access to value and to configuration
++ Modifiers removed - hard to support, dangerous in mistake
+
+Release 3.1 - 30.01.2018
++ Releases doc added
++ Possibility to configure config output directory
++ All exceptions have message now

@@ -182,6 +182,6 @@ public class SmartConfigPointGenerator {
             }
         }
 
-        throw new RuntimeException();
+        throw new RuntimeException("Unexpected property type: '" + conditionalProperty.getType() + "'");
     }
 }

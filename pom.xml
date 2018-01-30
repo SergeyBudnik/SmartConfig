@@ -7,7 +7,7 @@
 
     <groupId>com.github.sergeybudnik</groupId>
     <artifactId>smart.config</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
     <packaging>maven-plugin</packaging>
 
     <name>SmartConfig</name>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>com.github.sergeybudnik</groupId>
             <artifactId>smart.config.data</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
         </dependency>
 
         <dependency>

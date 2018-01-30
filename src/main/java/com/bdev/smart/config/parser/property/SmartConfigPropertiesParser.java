@@ -115,7 +115,12 @@ public class SmartConfigPropertiesParser {
             Optional<Dimension> dimension = spaceInfo.getSpace().getDimensionByValue(dimensionValue);
 
             if (!dimension.isPresent()) {
-                throw new RuntimeException();
+                String coordinates = dimensionsValues
+                        .stream()
+                        .reduce((d1, d2) -> d1 + "." + d2)
+                        .orElse("");
+
+                throw new RuntimeException("Point with coordinates '" + coordinates + "' does not exist in space");
             }
 
             point.addCoordinate(dimension.get(), dimensionValue);

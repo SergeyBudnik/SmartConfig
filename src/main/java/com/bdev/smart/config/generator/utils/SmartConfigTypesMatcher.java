@@ -23,6 +23,6 @@ public class SmartConfigTypesMatcher {
                 return "List<String>";
         }
 
-        throw new RuntimeException();
+        throw new RuntimeException("Unexpected property type: '" + propertyType + "'");
     }
 }
