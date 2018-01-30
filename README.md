@@ -71,7 +71,7 @@ language {
     <dependency>
         <groupId>com.github.sergeybudnik</groupId>
         <artifactId>smart.config.data</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
     </dependency>
 </dependencies>
 
@@ -80,7 +80,7 @@ language {
         <plugin>
             <groupId>com.github.sergeybudnik</groupId>
             <artifactId>smart.config</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
             <executions>
                 <execution>
                     <phase>generate-sources</phase>
@@ -89,6 +89,11 @@ language {
                     </goals>
                 </execution>
             </executions>
+            <configuration>
+                <relativeDirectory>/smart-generated-sources/smart-config</relativeDirectory> <!-- Optional -->
+                <csvProperties>${project.basedir}/src/main/resources/smart-config-test.conf</csvProperties> <!-- Required -->
+                <dimensions>${project.basedir}/src/main/resources/smart-config-dimensions.conf</dimensions> <!-- Required -->
+            </configuration>
         </plugin>
     </plugins>
 </build>
