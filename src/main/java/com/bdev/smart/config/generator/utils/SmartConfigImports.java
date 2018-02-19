@@ -6,6 +6,6 @@ public interface SmartConfigImports {
     String ARRAYS_IMPORT = "java.util.Arrays";
     String OPTIONAL_IMPORT = "java.util.Optional";
 
-    String SMART_CONFIG_IMPORT = "com.bdev.smart.config.SmartConfig";
+    String SMART_CONFIG_IMPORT = "SmartConfig";
     String SMART_CONFIG_VALUE_IMPORT = "com.bdev.smart.config.data.SmartConfigValue";
 }

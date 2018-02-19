@@ -18,7 +18,7 @@ public class SmartConfigPropertiesGenerator {
         unit.addImport(SmartConfigImports.ARRAYS_IMPORT);
         unit.addImport(SmartConfigImports.OPTIONAL_IMPORT);
 
-        unit.addImport(SmartConfigImports.SMART_CONFIG_IMPORT);
+        unit.addImport(rootPackage + "." + SmartConfigImports.SMART_CONFIG_IMPORT);
         unit.addImport(SmartConfigImports.SMART_CONFIG_VALUE_IMPORT);
 
         PackageClass smartConfigProperties = unit.newClass("SmartConfigProperties");
