@@ -4,7 +4,6 @@ import com.bdev.smart.config.data.inner.ConfigInfo;
 import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.generator.utils.SmartConfigImports;
 import com.bdev.smart.config.generator.utils.SmartConfigNames;
-import com.bdev.smart.config.generator.utils.SmartConfigNamespace;
 import com.bdev.smart.config.generator.utils.SmartConfigTypesMatcher;
 import net.sourceforge.jenesis4java.AbstractMethod;
 import net.sourceforge.jenesis4java.CompilationUnit;
@@ -14,12 +13,11 @@ import net.sourceforge.jenesis4java.VirtualMachine;
 import static net.sourceforge.jenesis4java.Access.PUBLIC;
 
 public class SmartConfigGenerator {
-    public static void generate(VirtualMachine vm, String rootPath, ConfigInfo configInfo)
-            throws Exception {
+    public static void generate(VirtualMachine vm, String rootPath, String rootPackage, ConfigInfo configInfo) {
 
         CompilationUnit unit = vm.newCompilationUnit(rootPath);
 
-        unit.setNamespace(SmartConfigNamespace.VALUE);
+        unit.setNamespace(rootPackage);
 
         unit.addImport(SmartConfigImports.LIST_IMPORT);
         unit.addImport(SmartConfigImports.SMART_CONFIG_VALUE_IMPORT);

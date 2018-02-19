@@ -8,17 +8,16 @@ import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import com.bdev.smart.config.generator.utils.SmartConfigImports;
 import com.bdev.smart.config.generator.utils.SmartConfigNames;
-import com.bdev.smart.config.generator.utils.SmartConfigNamespace;
 import com.bdev.smart.config.generator.utils.SmartConfigTypesMatcher;
 import net.sourceforge.jenesis4java.*;
 
 import java.util.List;
 
 public class SmartConfigPointGenerator {
-    public static void generate(VirtualMachine vm, String rootPath, ConfigInfo configInfo, Point point) {
+    public static void generate(VirtualMachine vm, String rootPath, String rootPackage, ConfigInfo configInfo, Point point) {
         CompilationUnit unit = vm.newCompilationUnit(rootPath);
 
-        unit.setNamespace(SmartConfigNamespace.VALUE);
+        unit.setNamespace(rootPackage);
 
         unit.addImport(SmartConfigImports.LIST_IMPORT);
         unit.addImport(SmartConfigImports.COLLECTIONS_IMPORT);

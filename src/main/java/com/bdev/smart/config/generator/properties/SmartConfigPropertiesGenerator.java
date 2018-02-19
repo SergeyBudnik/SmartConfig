@@ -5,14 +5,13 @@ import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.data.inner.dimension.DimensionValue;
 import com.bdev.smart.config.data.inner.dimension.Point;
 import com.bdev.smart.config.generator.utils.SmartConfigImports;
-import com.bdev.smart.config.generator.utils.SmartConfigNamespace;
 import net.sourceforge.jenesis4java.*;
 
 public class SmartConfigPropertiesGenerator {
-    public static void generate(VirtualMachine vm, String rootPath, ConfigInfo configInfo) throws Exception {
+    public static void generate(VirtualMachine vm, String rootPath, String rootPackage, ConfigInfo configInfo) {
         CompilationUnit unit = vm.newCompilationUnit(rootPath);
 
-        unit.setNamespace(SmartConfigNamespace.VALUE);
+        unit.setNamespace(rootPackage);
 
         unit.addImport(SmartConfigImports.LIST_IMPORT);
         unit.addImport(SmartConfigImports.COLLECTIONS_IMPORT);
