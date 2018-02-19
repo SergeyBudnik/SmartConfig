@@ -24,7 +24,7 @@ public class SmartConfigPointGenerator {
         unit.addImport(SmartConfigImports.ARRAYS_IMPORT);
         unit.addImport(SmartConfigImports.OPTIONAL_IMPORT);
 
-        unit.addImport(SmartConfigImports.SMART_CONFIG_IMPORT);
+        unit.addImport(rootPackage + "." + SmartConfigImports.SMART_CONFIG_IMPORT);
         unit.addImport(SmartConfigImports.SMART_CONFIG_VALUE_IMPORT);
 
         String pointPropertyClassName = point.getName() + "SmartConfig";
