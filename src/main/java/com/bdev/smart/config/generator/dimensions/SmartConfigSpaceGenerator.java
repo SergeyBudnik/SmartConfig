@@ -3,14 +3,14 @@ package com.bdev.smart.config.generator.dimensions;
 import com.bdev.smart.config.data.inner.dimension.Dimension;
 import com.bdev.smart.config.data.inner.dimension.DimensionValue;
 import com.bdev.smart.config.data.inner.dimension.Space;
-import com.bdev.smart.config.generator.SmartConfigGenerator;
+import com.bdev.smart.config.generator.SmartConfigGlobalGenerator;
 import net.sourceforge.jenesis4java.*;
 
 public class SmartConfigSpaceGenerator {
-    public static void generate(VirtualMachine vm, String rootPath, Space space) throws Exception {
+    public static void generate(VirtualMachine vm, String rootPath, String rootPackage, Space space) {
         CompilationUnit unit = vm.newCompilationUnit(rootPath);
 
-        unit.setNamespace(SmartConfigGenerator.BASE_PACKAGE);
+        unit.setNamespace(rootPackage);
 
         PackageClass smartConfigDimensionClass = unit.newPublicClass("SmartConfigSpace");
 

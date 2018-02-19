@@ -1,11 +1,10 @@
 package com.bdev.smart.config;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
-import com.bdev.smart.config.generator.SmartConfigGenerator;
+import com.bdev.smart.config.generator.SmartConfigGlobalGenerator;
 import com.bdev.smart.config.parser.SmartConfigParser;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -21,6 +20,8 @@ public class SmartConfigMojo extends AbstractMojo {
     protected File buildDirectory;
     @Parameter(property = "smart.config.relativeDirectory", defaultValue = "/generated-sources/smart-config", required = true)
     protected String relativeDirectory;
+    @Parameter(property = "smart.config.rootPackage", defaultValue = "com.bdev.smart.config", required = true)
+    protected String rootPackage;
     @Parameter(property = "smart.config.csvProperties", required = true)
     protected String csvProperties;
     @Parameter(property = "smart.config.dimensions", required = true)
@@ -44,9 +45,10 @@ public class SmartConfigMojo extends AbstractMojo {
             ConfigInfo configInfo =
                     SmartConfigParser.parse(dimensions, csvProperties);
 
-            SmartConfigGenerator
+            SmartConfigGlobalGenerator
                     .generate(
                             getOutputDirectory().getAbsolutePath(),
+                            rootPackage,
                             configInfo
                     );
         } catch (Exception e) {
