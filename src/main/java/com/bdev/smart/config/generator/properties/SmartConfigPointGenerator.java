@@ -2,16 +2,15 @@ package com.bdev.smart.config.generator.properties;
 
 import com.bdev.smart.config.data.inner.ConfigInfo;
 import com.bdev.smart.config.data.inner.dimension.Point;
-import com.bdev.smart.config.data.inner.property.AllProperties;
 import com.bdev.smart.config.data.inner.property.ConditionalProperty;
 import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import com.bdev.smart.config.generator.utils.SmartConfigImports;
-import com.bdev.smart.config.generator.utils.SmartConfigNames;
-import com.bdev.smart.config.generator.utils.SmartConfigTypesMatcher;
 import net.sourceforge.jenesis4java.*;
 
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 public class SmartConfigPointGenerator {
     public static void generate(VirtualMachine vm, String rootPath, String rootPackage, ConfigInfo configInfo, Point point) {
@@ -32,74 +31,35 @@ public class SmartConfigPointGenerator {
         PackageClass pointPropertyClass = unit.newClass(pointPropertyClassName);
 
         pointPropertyClass.setAccess(Access.PACKAGE);
-        pointPropertyClass.addImplements("SmartConfig");
+        pointPropertyClass.setExtends("SmartConfigImpl");
 
-        for (String propertyName : configInfo.getAllProperties().getAllProperties().keySet()) {
-            Property property = configInfo.getAllProperties().getAllProperties().get(propertyName);
-
-            ConditionalProperty conditionalProperty = property.getMostSuitableProperty(point);
-
-            ClassField f = pointPropertyClass.newField(
-                    vm.newType(SmartConfigTypesMatcher.getConfigType(property.getType())),
-                    propertyName
-            );
-
-            f.setAccess(Access.PRIVATE);
-            f.setExpression(getPropertyValue(vm, conditionalProperty));
-
-            ClassMethod getPropertyConfigMethod = pointPropertyClass.newMethod(
-                    vm.newType(SmartConfigTypesMatcher.getConfigType(property.getType())),
-                    SmartConfigNames.getPropertyConfigAccessorName(propertyName)
-            ); {
-                getPropertyConfigMethod.setAccess(Access.PUBLIC);
-                getPropertyConfigMethod.newReturn().setExpression(vm.newVar(propertyName));
-            }
-
-            ClassMethod getPropertyMethod = pointPropertyClass.newMethod(
-                    vm.newType(SmartConfigTypesMatcher.getType(property.getType(), true)),
-                    SmartConfigNames.getPropertyAccessorName(propertyName)
-            ); {
-                getPropertyMethod.setAccess(Access.PUBLIC);
-                getPropertyMethod.newReturn().setExpression(
-                        vm.newVar(propertyName + ".getValue()")
-                );
-            }
-        }
-
-        generateAllPropertiesArray(vm, pointPropertyClass, configInfo.getAllProperties());
-        generateFindPropertyByNameMethod(vm, pointPropertyClass);
+        generateConstructor(vm, pointPropertyClass, configInfo, point);
 
         unit.encode();
     }
 
-    private static void generateFindPropertyByNameMethod(
-            VirtualMachine vm,
-            PackageClass dimensionPropertyClass
+    private static void generateConstructor(
+            VirtualMachine vm, PackageClass pointPropertyClass, ConfigInfo configInfo, Point point
     ) {
-        ClassMethod findPropertyByNameMethod = dimensionPropertyClass.newMethod(
-                vm.newType("<T> Optional<SmartConfigValue<T>>"),
-                "findPropertyByName"
-        );
+        Constructor constructor = pointPropertyClass.newConstructor();
 
-        findPropertyByNameMethod.setAccess(Access.PUBLIC);
-        findPropertyByNameMethod.isFinal(true);
+        ConstructorForwarding superCall = constructor.forwardCall(Constructor.ForwardingTarget.SUPER);
 
-        findPropertyByNameMethod.addParameter(vm.newType("String"), "propertyName");
+        List<String> propertiesNames = configInfo
+                .getAllProperties()
+                .getAllProperties()
+                .keySet()
+                .stream()
+                .sorted()
+                .collect(toList());
 
-        For allPropertiesIteration = findPropertyByNameMethod.newFor();
+        for (String propertyName : propertiesNames) {
+            Property property = configInfo.getAllProperties().getAllProperties().get(propertyName);
 
-        allPropertiesIteration.addInit(vm.newVar("int i = 0"));
-        allPropertiesIteration.setPredicate(vm.newVar("i < ALL_PROPERTIES.size()"));
-        allPropertiesIteration.addUpdate(vm.newVar("i++"));
+            ConditionalProperty conditionalProperty = property.getMostSuitableProperty(point);
 
-        If allPropertiesIterationIf = allPropertiesIteration
-                .newIf(vm.newVar("ALL_PROPERTIES.get(i).isNameSuitable(propertyName)"));
-
-        allPropertiesIterationIf
-                .newReturn()
-                .setExpression(vm.newVar("Optional.of(ALL_PROPERTIES.get(i))"));
-
-        findPropertyByNameMethod.newReturn().setExpression(vm.newVar("Optional.empty()"));
+            superCall.addArg(getPropertyValue(vm, conditionalProperty));
+        }
     }
 
     private static Expression getPropertyValue(VirtualMachine vm, ConditionalProperty conditionalProperty) {
@@ -110,34 +70,6 @@ public class SmartConfigPointGenerator {
                         getUnboxedPropertyValue(conditionalProperty) +
                         ")"
         );
-    }
-
-    private static void generateAllPropertiesArray(
-            VirtualMachine vm,
-            PackageClass dimensionPropertyClass,
-            AllProperties allProperties
-    ) {
-        ClassField allPropertiesField = dimensionPropertyClass.newField(
-                vm.newType("List<SmartConfigValue>"),
-                "ALL_PROPERTIES"
-        );
-
-        allPropertiesField.setAccess(Access.PRIVATE);
-        allPropertiesField.isFinal(true);
-
-        StringBuilder expression = new StringBuilder("Arrays.asList(");
-
-        for (String propertyName : allProperties.getAllProperties().keySet()) {
-            expression.append(propertyName);
-            expression.append(", ");
-        }
-
-        expression.deleteCharAt(expression.length() - 1);
-        expression.deleteCharAt(expression.length() - 1);
-
-        expression.append(")");
-
-        allPropertiesField.setExpression(vm.newVar(expression.toString()));
     }
 
     private static String getUnboxedPropertyValue(
