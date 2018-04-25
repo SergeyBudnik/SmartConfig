@@ -4,6 +4,7 @@ import com.bdev.smart.config.data.inner.ConfigInfo;
 import com.bdev.smart.config.data.inner.dimension.Point;
 import com.bdev.smart.config.generator.dimensions.SmartConfigSpaceGenerator;
 import com.bdev.smart.config.generator.properties.SmartConfigGenerator;
+import com.bdev.smart.config.generator.properties.SmartConfigImplGenerator;
 import com.bdev.smart.config.generator.properties.SmartConfigPropertiesGenerator;
 import com.bdev.smart.config.generator.properties.SmartConfigPointGenerator;
 import net.sourceforge.jenesis4java.VirtualMachine;
@@ -21,6 +22,7 @@ public class SmartConfigGlobalGenerator {
 
         SmartConfigSpaceGenerator.generate(vm, rootPath, rootPackage, configInfo.getSpaceInfo().getSpace());
         SmartConfigGenerator.generate(vm, rootPath, rootPackage, configInfo);
+        SmartConfigImplGenerator.generate(vm, rootPath, rootPackage, configInfo);
         SmartConfigPropertiesGenerator.generate(vm, rootPath, rootPackage, configInfo);
 
         for (Point point : configInfo.getSpaceInfo().getPoints()) {

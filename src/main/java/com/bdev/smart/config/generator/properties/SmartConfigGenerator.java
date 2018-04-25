@@ -42,6 +42,7 @@ public class SmartConfigGenerator {
         }
 
         generateFindPropertyByNameMethod(vm, smartConfigPropertiesInterface);
+        generateCopyMethod(vm, smartConfigPropertiesInterface);
 
         unit.encode();
     }
@@ -57,5 +58,16 @@ public class SmartConfigGenerator {
                 );
 
         findPropertyByNameMethod.addParameter(vm.newType("String"), "propertyName");
+    }
+
+    private static void generateCopyMethod(
+            VirtualMachine vm,
+            Interface smartConfigPropertiesInterface
+    ) {
+        smartConfigPropertiesInterface
+                .newMethod(
+                        vm.newType("SmartConfig"),
+                        "copy"
+                );
     }
 }
