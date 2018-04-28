@@ -9,8 +9,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 @Mojo(name = "jenesis4java", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class SmartConfigMojo extends AbstractMojo {
@@ -31,6 +33,14 @@ public class SmartConfigMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         if (project != null) {
             project.addCompileSourceRoot(getOutputDirectory().getAbsolutePath());
+        }
+
+        try {
+            if (getOutputDirectory().exists()) {
+                FileUtils.deleteDirectory(getOutputDirectory());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to delete old source directory");
         }
 
         if (!getOutputDirectory().mkdirs()) {
