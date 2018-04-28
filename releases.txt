@@ -26,3 +26,7 @@ Release 3.3 - 26.04.2018
 
 Release 3.4 - 28.04.2018
 + Previous configuration is auto-deleted on plugin execution now
+
+Release 3.4.1 - 28.04.2018
++ Support dash-property-name (previously only dot.property.name or casePropertyName)
+! Show error message on property with empty array value

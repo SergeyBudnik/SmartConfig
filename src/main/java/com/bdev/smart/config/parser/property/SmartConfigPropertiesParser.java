@@ -149,6 +149,13 @@ public class SmartConfigPropertiesParser {
     }
 
     private static PropertyType getListType(String propertyName, List value) {
+        if (value.isEmpty()) {
+            throw new RuntimeException(String.format(
+                    "Invalid property: %s. Array can't be empty",
+                    propertyName
+            ));
+        }
+
         PropertyType type = null;
 
         for (Object o : value) {

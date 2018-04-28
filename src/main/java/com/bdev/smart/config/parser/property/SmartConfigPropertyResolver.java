@@ -7,7 +7,7 @@ class SmartConfigPropertyResolver {
     static String getName(String propertyKey) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        String [] propertyKeyParts = propertyKey.replace("\"", "").split("\\.");
+        String [] propertyKeyParts = propertyKey.replace("\"", "").split("[-.]");
 
         for (String propertyKeyPart : propertyKeyParts) {
             if (propertyKeyPart.startsWith("~")) {
@@ -25,7 +25,7 @@ class SmartConfigPropertyResolver {
     }
 
     static List<String> getDimensions(String propertyKey) {
-        String [] propertyKeyParts = propertyKey.replace("\"", "").split("\\.");
+        String [] propertyKeyParts = propertyKey.replace("\"", "").split("[-.]");
 
         for (String propertyKeyPart : propertyKeyParts) {
             if (propertyKeyPart.startsWith("~")) {
