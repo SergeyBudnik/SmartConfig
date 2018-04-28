@@ -23,3 +23,6 @@ Release 3.2 - 20.02.2018
 
 Release 3.3 - 26.04.2018
 + Possibility to copy the configuration into a separate object
+
+Release 3.4 - 28.04.2018
++ Previous configuration is auto-deleted on plugin execution now
