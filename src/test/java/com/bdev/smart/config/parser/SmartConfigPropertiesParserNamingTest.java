@@ -54,6 +54,26 @@ public class SmartConfigPropertiesParserNamingTest extends SmartConfigParserTest
     }
 
     @Test
+    public void testDashNaming() {
+        AllProperties allProperties = SmartConfigPropertiesParser.parse(
+                getConfigPath(
+                        "properties-parser/naming",
+                        "test-dash-naming"
+                ),
+                new SpaceInfo(new Space(), new HashSet<>())
+        );
+
+        assertEquals(1, allProperties.getAllProperties().size());
+        assertEquals(NUMBER, allProperties.getAllProperties().get("testPropertyName").getType());
+        assertEquals(0, allProperties.getAllProperties().get("testPropertyName").getDimensionsProperty().size());
+
+        DefaultProperty defaultProperty = allProperties.getAllProperties().get("testPropertyName").getDefaultProperty();
+
+        assertEquals(1, defaultProperty.getValue());
+        assertEquals(NUMBER, defaultProperty.getType());
+    }
+
+    @Test
     public void testMixedNaming() {
         AllProperties allProperties = SmartConfigPropertiesParser.parse(
                 getConfigPath(
@@ -64,10 +84,10 @@ public class SmartConfigPropertiesParserNamingTest extends SmartConfigParserTest
         );
 
         assertEquals(1, allProperties.getAllProperties().size());
-        assertEquals(NUMBER, allProperties.getAllProperties().get("testPropertyName").getType());
-        assertEquals(0, allProperties.getAllProperties().get("testPropertyName").getDimensionsProperty().size());
+        assertEquals(NUMBER, allProperties.getAllProperties().get("testPropertyNameMixed").getType());
+        assertEquals(0, allProperties.getAllProperties().get("testPropertyNameMixed").getDimensionsProperty().size());
 
-        DefaultProperty defaultProperty = allProperties.getAllProperties().get("testPropertyName").getDefaultProperty();
+        DefaultProperty defaultProperty = allProperties.getAllProperties().get("testPropertyNameMixed").getDefaultProperty();
 
         assertEquals(1, defaultProperty.getValue());
         assertEquals(NUMBER, defaultProperty.getType());
