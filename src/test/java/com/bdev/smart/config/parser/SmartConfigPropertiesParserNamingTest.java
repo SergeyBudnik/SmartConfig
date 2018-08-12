@@ -4,12 +4,14 @@ import com.bdev.smart.config.data.inner.dimension.Space;
 import com.bdev.smart.config.data.inner.dimension.SpaceInfo;
 import com.bdev.smart.config.data.inner.property.AllProperties;
 import com.bdev.smart.config.data.inner.property.DefaultProperty;
+import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.parser.property.SmartConfigPropertiesParser;
 import org.junit.Test;
 
 import java.util.HashSet;
 
 import static com.bdev.smart.config.data.inner.property.PropertyType.NUMBER;
+import static com.bdev.smart.config.data.inner.property.PropertyType.STRING;
 import static org.junit.Assert.assertEquals;
 
 public class SmartConfigPropertiesParserNamingTest extends SmartConfigParserTest {
@@ -91,5 +93,28 @@ public class SmartConfigPropertiesParserNamingTest extends SmartConfigParserTest
 
         assertEquals(1, defaultProperty.getValue());
         assertEquals(NUMBER, defaultProperty.getType());
+    }
+
+    @Test
+    public void testTemporaryNaming() {
+        AllProperties allProperties = SmartConfigPropertiesParser.parse(
+                getConfigPath(
+                        "properties-parser/naming",
+                        "test-temporary-naming"
+                ),
+                new SpaceInfo(new Space(), new HashSet<>())
+        );
+
+        assertEquals(1, allProperties.getAllProperties().size());
+
+        Property property = allProperties.getAllProperties().get("testPropertyNameTemporaryUsage");
+
+        assertEquals(STRING, property.getType());
+        assertEquals(0, property.getDimensionsProperty().size());
+
+        DefaultProperty defaultProperty = property.getDefaultProperty();
+
+        assertEquals("1_2", defaultProperty.getValue());
+        assertEquals(STRING, defaultProperty.getType());
     }
 }
