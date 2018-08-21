@@ -46,18 +46,23 @@ public class SmartConfigPropertiesParser {
         config
                 .entrySet()
                 .forEach(configProperty -> {
-                    String propertyName = getName(configProperty.getKey());
-                    List<String> dimensionsValues = getDimensions(configProperty.getKey());
+                    boolean isTemporary = configProperty.getKey().startsWith("-");
 
-                    Property property = allProperties.findOrCreateProperty(propertyName);
-                    Object propertyValue = config.getAnyRef(configProperty.getKey());
+                    if (!isTemporary) {
+                        String propertyName = getName(configProperty.getKey());
 
-                    PropertyType propertyType = getType(propertyName, configProperty.getValue(), propertyValue);
+                        List<String> dimensionsValues = getDimensions(configProperty.getKey());
 
-                    if (dimensionsValues.size() == 0 || dimensionsValues.contains(DEFAULT_PROPERTY_KEYWORD)) {
-                        processDefaultProperty(dimensionsValues, property, propertyName, propertyValue, propertyType);
-                    } else {
-                        processProperty(property, spaceInfo, allProperties, propertyName, propertyValue, propertyType, dimensionsValues);
+                        Property property = allProperties.findOrCreateProperty(propertyName);
+                        Object propertyValue = config.getAnyRef(configProperty.getKey());
+
+                        PropertyType propertyType = getType(propertyName, configProperty.getValue(), propertyValue);
+
+                        if (dimensionsValues.size() == 0 || dimensionsValues.contains(DEFAULT_PROPERTY_KEYWORD)) {
+                            processDefaultProperty(dimensionsValues, property, propertyName, propertyValue, propertyType);
+                        } else {
+                            processProperty(property, spaceInfo, allProperties, propertyName, propertyValue, propertyType, dimensionsValues);
+                        }
                     }
                 });
 
