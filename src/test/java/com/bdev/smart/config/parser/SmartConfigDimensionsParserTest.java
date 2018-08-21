@@ -160,4 +160,92 @@ public class SmartConfigDimensionsParserTest extends SmartConfigParserTest {
             throw e;
         }
     }
+
+    @Test
+    public void testWildcardDimensions() {
+        SpaceInfo spaceInfo = SmartConfigSpaceParser.parse(
+                getConfigPath(
+                        "dimensions-parser",
+                        "test-dimensions-wildcard"
+                )
+        );
+
+        Set<Point> points = spaceInfo.getPoints(); {
+            assertEquals(3, points.size());
+
+            assertTrue(points.stream()
+                    .filter(it -> it.containsCoordinate("tier", "sit"))
+                    .filter(it -> it.containsCoordinate("zone", "uk"))
+                    .anyMatch(it -> true)
+            );
+
+            assertTrue(points.stream()
+                    .filter(it -> it.containsCoordinate("tier", "uat"))
+                    .filter(it -> it.containsCoordinate("zone", "uk"))
+                    .anyMatch(it -> true)
+            );
+
+            assertTrue(points.stream()
+                    .filter(it -> it.containsCoordinate("tier", "uat"))
+                    .filter(it -> it.containsCoordinate("zone", "us"))
+                    .anyMatch(it -> true)
+            );
+        }
+    }
+
+    @Test
+    public void testWildcardWithIntersectionsDimensions() {
+        SpaceInfo spaceInfo = SmartConfigSpaceParser.parse(
+                getConfigPath(
+                        "dimensions-parser",
+                        "test-dimensions-wildcard-with-intersections"
+                )
+        );
+
+        Set<Point> points = spaceInfo.getPoints(); {
+            assertEquals(6, points.size());
+
+            assertTrue(points.stream()
+                    .filter(it -> it.containsCoordinate("tier", "sit"))
+                    .filter(it -> it.containsCoordinate("zone", "uk"))
+                    .filter(it -> it.containsCoordinate("location", "int"))
+                    .anyMatch(it -> true)
+            );
+
+            assertTrue(points.stream()
+                    .filter(it -> it.containsCoordinate("tier", "sit"))
+                    .filter(it -> it.containsCoordinate("zone", "uk"))
+                    .filter(it -> it.containsCoordinate("location", "ext"))
+                    .anyMatch(it -> true)
+            );
+
+            assertTrue(points.stream()
+                    .filter(it -> it.containsCoordinate("tier", "uat"))
+                    .filter(it -> it.containsCoordinate("zone", "uk"))
+                    .filter(it -> it.containsCoordinate("location", "int"))
+                    .anyMatch(it -> true)
+            );
+
+            assertTrue(points.stream()
+                    .filter(it -> it.containsCoordinate("tier", "uat"))
+                    .filter(it -> it.containsCoordinate("zone", "uk"))
+                    .filter(it -> it.containsCoordinate("location", "ext"))
+                    .anyMatch(it -> true)
+            );
+
+            assertTrue(points.stream()
+                    .filter(it -> it.containsCoordinate("tier", "uat"))
+                    .filter(it -> it.containsCoordinate("zone", "us"))
+                    .filter(it -> it.containsCoordinate("location", "int"))
+                    .anyMatch(it -> true)
+            );
+
+            assertTrue(points.stream()
+                    .filter(it -> it.containsCoordinate("tier", "uat"))
+                    .filter(it -> it.containsCoordinate("zone", "us"))
+                    .filter(it -> it.containsCoordinate("location", "ext"))
+                    .anyMatch(it -> true)
+            );
+        }
+    }
 }
