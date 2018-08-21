@@ -12,6 +12,7 @@ import static java.lang.String.format;
 public class SmartConfigSpaceParser {
     private static final String SPACE_KEYWORD = "space";
     private static final String POINTS_KEYWORD = "points";
+    private static final String ANY_KEYWORD = "any_";
 
     public static SpaceInfo parse(String fileName) {
         Space space = parseSpace(fileName);
@@ -145,8 +146,8 @@ public class SmartConfigSpaceParser {
         for (DimensionValue dimensionValue : dimension.getValues()) {
             DimensionValue pointDimensionValue = point.getLocation().get(dimension);
 
-            boolean dimensionIsNotAny = !dimensionValue.getName().equals("any_" + dimension.getName());
-            boolean pointDimensionIsAny = pointDimensionValue.getName().equals("any_" + dimension.getName());
+            boolean dimensionIsNotAny = !dimensionValue.getName().equals(ANY_KEYWORD + dimension.getName());
+            boolean pointDimensionIsAny = pointDimensionValue.getName().equals(ANY_KEYWORD + dimension.getName());
 
             if (dimensionIsNotAny && (pointDimensionIsAny || pointDimensionValue.equals(dimensionValue))) {
                 pointBuilder.push(new Tuple<>(dimension, dimensionValue));
