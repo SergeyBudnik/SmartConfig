@@ -1,6 +1,7 @@
 package com.bdev.smart.config.parser.dimension;
 
 import com.bdev.smart.config.data.inner.dimension.*;
+import com.bdev.smart.config.data.util.Tuple;
 import com.bdev.smart.config.reader.SmartConfigReader;
 
 import java.util.*;
@@ -11,6 +12,7 @@ import static java.lang.String.format;
 public class SmartConfigSpaceParser {
     private static final String SPACE_KEYWORD = "space";
     private static final String POINTS_KEYWORD = "points";
+    private static final String ANY_KEYWORD = "any_";
 
     public static SpaceInfo parse(String fileName) {
         Space space = parseSpace(fileName);
@@ -104,10 +106,57 @@ public class SmartConfigSpaceParser {
                 );
             }
 
-            points.add(point);
+            List<Point> pointsToAdd = new ArrayList<>();
+
+            generatePointsToAdd(
+                    point,
+                    new ArrayList<>(space.getDimensions()),
+                    0,
+                    new Stack<>(),
+                    pointsToAdd
+            );
+
+            points.addAll(pointsToAdd);
         }
 
         return points;
+    }
+
+    private static void generatePointsToAdd(
+            Point point,
+            List<Dimension> dimensions,
+            int dimensionIndex,
+            Stack<Tuple<Dimension, DimensionValue>> pointBuilder,
+            List<Point> res
+    ) {
+        if (dimensions.size() == dimensionIndex) {
+            Point p = new Point();
+
+            for (Tuple<Dimension, DimensionValue> pointCoordinate : pointBuilder) {
+                p.addCoordinate(pointCoordinate.getA(), pointCoordinate.getB());
+            }
+
+            res.add(p);
+
+            return;
+        }
+
+        Dimension dimension = dimensions.get(dimensionIndex);
+
+        for (DimensionValue dimensionValue : dimension.getValues()) {
+            DimensionValue pointDimensionValue = point.getLocation().get(dimension);
+
+            boolean dimensionIsNotAny = !dimensionValue.getName().equals(ANY_KEYWORD + dimension.getName());
+            boolean pointDimensionIsAny = pointDimensionValue.getName().equals(ANY_KEYWORD + dimension.getName());
+
+            if (dimensionIsNotAny && (pointDimensionIsAny || pointDimensionValue.equals(dimensionValue))) {
+                pointBuilder.push(new Tuple<>(dimension, dimensionValue));
+
+                generatePointsToAdd(point, dimensions, dimensionIndex + 1, pointBuilder, res);
+
+                pointBuilder.pop();
+            }
+        }
     }
 
     private static String parseDimensionName(String rawDimensionName) {

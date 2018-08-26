@@ -1,5 +1,6 @@
 package com.bdev.smart.config.data.inner.dimension;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.Comparator;
@@ -8,6 +9,7 @@ import java.util.TreeMap;
 
 import static java.lang.String.format;
 
+@EqualsAndHashCode(of = "location")
 public class Point {
     @Getter private Map<Dimension, DimensionValue> location = new TreeMap<>(
             Comparator.comparing(Dimension::getName)
