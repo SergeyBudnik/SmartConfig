@@ -58,45 +58,29 @@ public class SmartConfigImplGenerator {
                         vm.newVar(propertyName + ".getValue()")
                 );
             }
+
+            ClassMethod setPropertyConfigMethod = pointPropertyClass.newMethod(
+                    vm.newType("void"),
+                    SmartConfigNames.getPropertyConfigSetterName(propertyName)
+            ); {
+                setPropertyConfigMethod.setAccess(Access.PACKAGE);
+                setPropertyConfigMethod.addParameter(
+                        vm.newType(SmartConfigTypesMatcher.getConfigType(property.getType())),
+                        propertyName
+                );
+
+                setPropertyConfigMethod.newStmt(vm.newAssign(
+                        vm.newVar("this." + propertyName),
+                        vm.newVar(propertyName)
+                ));
+            }
         }
 
-        generateConstructor(vm, pointPropertyClass, configInfo.getAllProperties());
         generateCopyMethod(vm, pointPropertyClass, configInfo.getAllProperties());
         generateAllPropertiesArray(vm, pointPropertyClass, configInfo.getAllProperties());
         generateFindPropertyByNameMethod(vm, pointPropertyClass);
 
         unit.encode();
-    }
-
-    private static void generateConstructor(
-            VirtualMachine vm,
-            PackageClass dimensionPropertyClass,
-            AllProperties allProperties
-    ) {
-        Constructor constructor = dimensionPropertyClass.newConstructor();
-
-        constructor.setAccess(Access.PUBLIC);
-
-        List<String> propertiesNames = allProperties
-                        .getAllProperties()
-                        .keySet()
-                        .stream()
-                        .sorted()
-                        .collect(toList());
-
-        for (String propertyName : propertiesNames) {
-            Property property = allProperties.getAllProperties().get(propertyName);
-
-            constructor.addParameter(
-                    vm.newType(SmartConfigTypesMatcher.getConfigType(property.getType())),
-                    propertyName
-            );
-
-            constructor.newStmt(vm.newAssign(
-                    vm.newVar("this." + propertyName),
-                    vm.newVar(propertyName)
-            ));
-        }
     }
 
     private static void generateCopyMethod(
@@ -118,23 +102,22 @@ public class SmartConfigImplGenerator {
                 .sorted()
                 .collect(toList());
 
-        StringBuilder sb = new StringBuilder();
+        copyMethod.newStmt(vm.newAssign(
+                vm.newVar("SmartConfigImpl copy"),
+                vm.newVar("new SmartConfigImpl()")
+        ));
 
         for (String propertyName : propertiesNames) {
-            if (sb.length() != 0) {
-                sb.append(", ");
-            }
-
-            sb
-                    .append("new SmartConfigValue(")
-                    .append(propertyName)
-                    .append(".getName(), ")
-                    .append(propertyName)
-                    .append(".getValue())");
+            copyMethod.newStmt(vm.newInvoke(
+                    SmartConfigNames.getPropertyConfigSetterName(propertyName)
+            ).addArg(vm.newVar("new SmartConfigValue(" +
+                    propertyName + ".getName()" +
+                    "," +
+                    propertyName + ".getValue()" +
+            ")")));
         }
 
-        copyMethod.newReturn()
-                .setExpression(vm.newVar("new SmartConfigImpl(" + sb.toString() + ")"));
+        copyMethod.newReturn().setExpression(vm.newVar("copy"));
     }
 
     private static void generateFindPropertyByNameMethod(
