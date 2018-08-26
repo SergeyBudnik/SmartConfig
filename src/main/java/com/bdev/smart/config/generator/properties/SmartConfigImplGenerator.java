@@ -109,6 +109,7 @@ public class SmartConfigImplGenerator {
 
         for (String propertyName : propertiesNames) {
             copyMethod.newStmt(vm.newInvoke(
+                    "copy",
                     SmartConfigNames.getPropertyConfigSetterName(propertyName)
             ).addArg(vm.newVar("new SmartConfigValue(" +
                     propertyName + ".getName()" +
