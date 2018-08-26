@@ -8,6 +8,13 @@ public class SmartConfigNames {
                 "Config";
     }
 
+    public static String getPropertyConfigSetterName(String propertyName) {
+        return "set" +
+                propertyName.substring(0, 1).toUpperCase() +
+                propertyName.substring(1) +
+                "Config";
+    }
+
     public static String getPropertyAccessorName(String propertyName) {
         return "get" +
                 propertyName.substring(0, 1).toUpperCase() +

@@ -6,6 +6,7 @@ import com.bdev.smart.config.data.inner.property.ConditionalProperty;
 import com.bdev.smart.config.data.inner.property.Property;
 import com.bdev.smart.config.data.inner.property.PropertyType;
 import com.bdev.smart.config.generator.utils.SmartConfigImports;
+import com.bdev.smart.config.generator.utils.SmartConfigNames;
 import net.sourceforge.jenesis4java.*;
 
 import java.util.List;
@@ -43,8 +44,6 @@ public class SmartConfigPointGenerator {
     ) {
         Constructor constructor = pointPropertyClass.newConstructor();
 
-        ConstructorForwarding superCall = constructor.forwardCall(Constructor.ForwardingTarget.SUPER);
-
         List<String> propertiesNames = configInfo
                 .getAllProperties()
                 .getAllProperties()
@@ -58,7 +57,11 @@ public class SmartConfigPointGenerator {
 
             ConditionalProperty conditionalProperty = property.getMostSuitableProperty(point);
 
-            superCall.addArg(getPropertyValue(vm, conditionalProperty));
+            constructor.newStmt(
+                    vm.newInvoke(
+                            SmartConfigNames.getPropertyConfigSetterName(propertyName)
+                    ).addArg(getPropertyValue(vm, conditionalProperty))
+            );
         }
     }
 
