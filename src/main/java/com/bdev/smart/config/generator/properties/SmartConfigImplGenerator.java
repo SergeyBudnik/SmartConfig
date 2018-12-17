@@ -112,6 +112,8 @@ public class SmartConfigImplGenerator {
                     "copy",
                     SmartConfigNames.getPropertyConfigSetterName(propertyName)
             ).addArg(vm.newVar("new SmartConfigValue(" +
+                    "copy" +
+                    "," +
                     propertyName + ".getName()" +
                     "," +
                     propertyName + ".getValue()" +
@@ -138,15 +140,15 @@ public class SmartConfigImplGenerator {
         For allPropertiesIteration = findPropertyByNameMethod.newFor();
 
         allPropertiesIteration.addInit(vm.newVar("int i = 0"));
-        allPropertiesIteration.setPredicate(vm.newVar("i < ALL_PROPERTIES.size()"));
+        allPropertiesIteration.setPredicate(vm.newVar("i < getAllProperties().size()"));
         allPropertiesIteration.addUpdate(vm.newVar("i++"));
 
         If allPropertiesIterationIf = allPropertiesIteration
-                .newIf(vm.newVar("ALL_PROPERTIES.get(i).isNameSuitable(propertyName)"));
+                .newIf(vm.newVar("getAllProperties().get(i).isNameSuitable(propertyName)"));
 
         allPropertiesIterationIf
                 .newReturn()
-                .setExpression(vm.newVar("Optional.of(ALL_PROPERTIES.get(i))"));
+                .setExpression(vm.newVar("Optional.of(getAllProperties().get(i))"));
 
         findPropertyByNameMethod.newReturn().setExpression(vm.newVar("Optional.empty()"));
     }
@@ -156,13 +158,13 @@ public class SmartConfigImplGenerator {
             PackageClass dimensionPropertyClass,
             AllProperties allProperties
     ) {
-        ClassField allPropertiesField = dimensionPropertyClass.newField(
+        ClassMethod getAllPropertiesMethod = dimensionPropertyClass.newMethod(
                 vm.newType("List<SmartConfigValue>"),
-                "ALL_PROPERTIES"
+                "getAllProperties"
         );
 
-        allPropertiesField.setAccess(Access.PRIVATE);
-        allPropertiesField.isFinal(true);
+        getAllPropertiesMethod.setAccess(Access.PRIVATE);
+        getAllPropertiesMethod.isFinal(true);
 
         StringBuilder expression = new StringBuilder("Arrays.asList(");
 
@@ -183,6 +185,6 @@ public class SmartConfigImplGenerator {
 
         expression.append(")");
 
-        allPropertiesField.setExpression(vm.newVar(expression.toString()));
+        getAllPropertiesMethod.newReturn().setExpression(vm.newVar(expression.toString()));
     }
 }

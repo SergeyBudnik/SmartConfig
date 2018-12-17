@@ -68,10 +68,12 @@ public class SmartConfigPointGenerator {
     private static Expression getPropertyValue(VirtualMachine vm, ConditionalProperty conditionalProperty) {
         return vm.newVar(
                 "new SmartConfigValue(" +
+                        "this" +
+                        "," +
                         "\"" + conditionalProperty.getName() + "\"" +
                         ", " +
                         getUnboxedPropertyValue(conditionalProperty) +
-                        ")"
+                    ")"
         );
     }
 
