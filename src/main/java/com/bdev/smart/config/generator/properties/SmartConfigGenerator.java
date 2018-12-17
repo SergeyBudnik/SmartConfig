@@ -26,6 +26,7 @@ public class SmartConfigGenerator {
         Interface smartConfigPropertiesInterface = unit.newInterface("SmartConfig");
 
         smartConfigPropertiesInterface.setAccess(PUBLIC);
+        smartConfigPropertiesInterface.addExtends("com.bdev.smart.config.data.CommonSmartConfig");
 
         for (String propertyName : configInfo.getAllProperties().getAllProperties().keySet()) {
             Property property = configInfo.getAllProperties().getAllProperties().get(propertyName);
